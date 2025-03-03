@@ -2,14 +2,13 @@ import java.awt.Image;
 
 import javax.swing.JLabel;
 
-public class Player extends JLabel {
+public class AbsPlayer extends JLabel {
     private int hp;
     private Image img;
     private double velocity;
     private double jumpHeight;
 
-
-    Player(int hp, image img, double velocity, double jumpHeight){
+    public AbsPlayer(int hp, image img, double velocity, double jumpHeight){
         this.img = img;
         this.hp = hp;
         this.velocity = velocity;

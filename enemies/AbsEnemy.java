@@ -1,10 +1,15 @@
 package enemies;
 
+import java.awt.Image;
+
 import javax.swing.JLabel;
 
 public abstract class AbsEnemy extends JLabel {
-    private JLabel img;
-    private int speed;
+    protected Image img;
+    protected int speed;
 
-
+    public AbsEnemy(Image img, int speed) {
+        this.img = img;
+        this.speed = speed;
+    }
 }
