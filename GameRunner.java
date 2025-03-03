@@ -5,6 +5,8 @@ public class GameRunner extends JFrame {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
 
+    private GameScreen gameScreen;
+
     public GameRunner() {
         setTitle("Suntana");
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -12,10 +14,14 @@ public class GameRunner extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        GameScreen gameScreen = new GameScreen();
+        // Initialize the game screen
+        gameScreen = new GameScreen();
         add(gameScreen);
-        
+
+        // Make the window visible
         setVisible(true);
+        
+        // Show the menu
         gameScreen.startGame();
     }
 

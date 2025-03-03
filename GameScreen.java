@@ -10,7 +10,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
 
-    private int playerX = 100, playerY = 370; // Player position (on the floor by default)
+    private int playerX = 100, playerY = 375; // Player position (on the floor by default)
     private int velocityY = 0; // Vertical velocity for jumping
     private final int gravity = 1; // Gravity effect
     private final int jumpForce = -18; // Jump force
@@ -60,8 +60,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             velocityY += gravity; // Apply gravity (fall down)
 
             // Check if the player lands on the ground
-            if (playerY >= 370) {
-                playerY = 370; // Set player back to the ground level
+            if (playerY >= 375) {
+                playerY = 375; // Set player back to the ground level
                 isJumping = false; // Stop jumping
                 velocityY = 0; // Reset velocity
             }
@@ -71,11 +71,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        // Draw the floor
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 470, GameRunner.SCREEN_WIDTH, 50); // Floor at y=470
-
         // Draw the player image (standing on the floor or jumping)
         if (playerImage != null) {
             g.drawImage(playerImage, playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT, this); // Resize player image to match the new size
@@ -85,7 +80,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // Make the player jump when the spacebar is pressed and not already jumping
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == 38) {
             if (!isJumping) {
                 isJumping = true;
                 velocityY = jumpForce; // Set the jump velocity
