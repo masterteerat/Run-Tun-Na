@@ -2,30 +2,36 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
 
-    private int playerX = 100, playerY = 480; // Player position
-    private int velocityY = 0; // Jump velocity
-    private final int gravity = 1; // Gravity
+    private int playerX = 100, playerY = 370; // Player position (on the floor by default)
+    private int velocityY = 0; // Vertical velocity for jumping
+    private final int gravity = 1; // Gravity effect
     private final int jumpForce = -18; // Jump force
-    private boolean isJumping = false; // Check if jumping
-    
-    private int backgroundX = 0; // Background position for scrolling effect
-    private ArrayList<Rectangle> obstacles; // List of obstacles
-    private Random rand = new Random();
+    private boolean isJumping = false; // Check if the player is jumping
+
+    private Image playerImage; // Player image for the character
+    private final int PLAYER_WIDTH = 100;  // Player width
+    private final int PLAYER_HEIGHT = 100; // Player height
 
     public GameScreen() {
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
-        setBackground(Color.BLACK);
+        setBackground(Color.CYAN); // Set the background color
         setFocusable(true);
         addKeyListener(this);
-        obstacles = new ArrayList<>();
+
+        // Load the player image
+        try {
+            playerImage = ImageIO.read(new File("Player/sun.png")); // Load the image file (make sure it's in the correct path)
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startGame() {
@@ -48,45 +54,16 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     }
 
     public void update() {
-        // Move background to simulate running
-        backgroundX -= 5;
-        if (backgroundX <= -GameRunner.SCREEN_WIDTH) {
-            backgroundX = 0;
-        }
-
-        // Move obstacles
-        Iterator<Rectangle> iterator = obstacles.iterator();
-        while (iterator.hasNext()) {
-            Rectangle obs = iterator.next();
-            obs.x -= 5; // Move left
-            if (obs.x + obs.width < 0) {
-                iterator.remove(); // Remove off-screen obstacles
-            }
-        }
-
-        // Spawn new obstacles randomly
-        if (rand.nextInt(100) < 2) { // 2% chance to spawn per frame
-            obstacles.add(new Rectangle(GameRunner.SCREEN_WIDTH, 480, 50, 50));
-        }
-
         // Jumping physics
         if (isJumping) {
-            playerY += velocityY;
-            velocityY += gravity;
-        }
+            playerY += velocityY; // Move player based on velocity
+            velocityY += gravity; // Apply gravity (fall down)
 
-        // Check if player lands on the ground
-        if (playerY >= 480) {
-            playerY = 480;
-            isJumping = false;
-            velocityY = 0;
-        }
-
-        // Check for collisions
-        for (Rectangle obs : obstacles) {
-            if (obs.intersects(new Rectangle(playerX, playerY, 50, 50))) {
-                running = false; // Stop game on collision
-                System.out.println("Game Over!");
+            // Check if the player lands on the ground
+            if (playerY >= 370) {
+                playerY = 370; // Set player back to the ground level
+                isJumping = false; // Stop jumping
+                velocityY = 0; // Reset velocity
             }
         }
     }
@@ -95,28 +72,23 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Draw scrolling background
+        // Draw the floor
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(backgroundX, 550, GameRunner.SCREEN_WIDTH, 50);
-        g.fillRect(backgroundX + GameRunner.SCREEN_WIDTH, 550, GameRunner.SCREEN_WIDTH, 50);
+        g.fillRect(0, 470, GameRunner.SCREEN_WIDTH, 50); // Floor at y=470
 
-        // Draw player
-        g.setColor(Color.RED);
-        g.fillRect(playerX, playerY, 50, 50);
-
-        // Draw obstacles
-        g.setColor(Color.YELLOW);
-        for (Rectangle obs : obstacles) {
-            g.fillRect(obs.x, obs.y, obs.width, obs.height);
+        // Draw the player image (standing on the floor or jumping)
+        if (playerImage != null) {
+            g.drawImage(playerImage, playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT, this); // Resize player image to match the new size
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        // Make the player jump when the spacebar is pressed and not already jumping
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             if (!isJumping) {
                 isJumping = true;
-                velocityY = jumpForce;
+                velocityY = jumpForce; // Set the jump velocity
             }
         }
     }
