@@ -13,15 +13,11 @@ public class GameRunner extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        // Initialize the game screen
+        
         gameScreen = new GameScreen();
         add(gameScreen);
-
-        // Make the window visible
         setVisible(true);
-        
-        // Show the menu
+
         gameScreen.startGame();
     }
 
