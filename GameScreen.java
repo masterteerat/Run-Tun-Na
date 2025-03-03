@@ -29,7 +29,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
         // Load the player image
         try {
-            playerImage = ImageIO.read(new File("Player/sun.png")); // Load the image file (make sure it's in the correct path)
+            playerImage = ImageIO.read(new File("src/sun.png")); // Load the image file (make sure it's in the correct path)
         } catch (IOException e) {
             e.printStackTrace();
         }
