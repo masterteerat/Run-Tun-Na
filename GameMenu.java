@@ -24,7 +24,7 @@ public class GameMenu extends JPanel {
             cloud1Label = createImageLabel("src/Elements/cloud1.png", 50, 50, 120, 60);
             cloud2Label = createImageLabel("src/Elements/cloud2.png", 400, 80, 120, 60);
             castlesLabel = createImageLabel("src/Elements/castles.png", 500, 200, 200, 150);
-            floorLabel = createImageLabel("src/Elements/floor.png", 0, 400, GameRunner.SCREEN_WIDTH, 100);
+            floorLabel = createImageLabel("src/Elements/floor.png", -20, 500, 1323, 117);
             mushroomLabel = createImageLabel("src/Elements/mushroom.png", 350, 350, 50, 50);
             starLabel = createImageLabel("src/Elements/star.png", 600, 100, 40, 40);
 
