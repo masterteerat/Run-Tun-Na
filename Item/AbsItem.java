@@ -1,6 +1,6 @@
 package Item;
 
-import enemies.enemy;
+import Enemies.enemy;
 
 public abstract class AbsItem extends AbsEnemy {
     public AbsItem(Image img, int speed) {
