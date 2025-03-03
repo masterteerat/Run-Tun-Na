@@ -20,6 +20,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private final int PLAYER_WIDTH = 100;  // Player width
     private final int PLAYER_HEIGHT = 100; // Player height
 
+
     public GameScreen() {
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
         setBackground(Color.CYAN); // Set the background color
