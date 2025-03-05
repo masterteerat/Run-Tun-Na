@@ -1,5 +1,4 @@
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +8,7 @@ public class Player {
     private int x, y;
     private int velocityY = 0;
     private final double gravity = 1;
-    private final int jumpForce = -30;
+    private final int jumpForce = -25;
     private boolean isJumping = false;
     private Image playerImage;
     private final int PLAYER_WIDTH = 100;
@@ -81,6 +80,6 @@ public class Player {
         isJumping = jumping;
     }
     public Rectangle getBounds() {
-        return new Rectangle(x, y, PLAYER_WIDTH, PLAYER_HEIGHT);
+        return new Rectangle(x + 20, y, PLAYER_WIDTH - 40, PLAYER_HEIGHT);
     }
 }

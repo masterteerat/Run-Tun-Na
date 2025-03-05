@@ -49,7 +49,6 @@ public class GameRunner extends JFrame {
         gameScreen.startGame();
     }
     
-
     public static void main(String[] args) {
         new GameRunner();
     }

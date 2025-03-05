@@ -42,7 +42,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         // สร้าง player object
         player = new Player(100, 475, "src/sun.png");
         //สร้าง แมว
-        cat = new Cat(1300, 490, -5, "src/cat.png" );
+        cat = new Cat(1300, 490, -7, "src/cat.png" );
 
         try {
             floor = ImageIO.read(new File("src/Elements/floor.png")); 
@@ -101,8 +101,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             if (!cat.isScored()) {
                 score++;
                 scoreLabel.setText("Score: " + score);
+                if (cat.getSpeed() > -25 && score % 6 == 0) {
+                    cat.setSpeed(Math.max(cat.getSpeed() - 2, -25));
+                    System.out.println(cat.getSpeed());
+                }
+                
                 cat.setScored(true);
-                cat.setSpeed(cat.getSpeed() - 2);
             }
         }
     }
@@ -189,7 +193,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_O) {
             gameOver();
         }
-        if (e.getKeyCode() == KeyEvent.VK_B) {  // ✅ ใช้ KeyEvent.VK_B แทนตัวเลข 66
+        if (e.getKeyCode() == KeyEvent.VK_B) {
             isDebug = !isDebug;
             repaint();
         }
