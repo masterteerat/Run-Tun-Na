@@ -7,31 +7,35 @@ import java.io.IOException;
 
 public class GameMenu extends JPanel {
     private GameRunner gameRunner;
-    
-    private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label, castlesLabel, 
-                   floorLabel, mushroomLabel, starLabel;
+
+    private Font PixelifySans = new Font("PixelifySans-Bold", Font.BOLD, 36);
+
+    private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label,cloud3Label, castlesLabel,
+            floorLabel, mushroomLabel, starLabel;
 
     public GameMenu(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
-        setBackground(Color.LIGHT_GRAY);
-        setLayout(null); 
+        setBackground(Color.decode("#FAFEFF"));
+        setLayout(null);
 
         // โหลดและเพิ่มรูปภาพ
         try {
-            benchLabel = createImageLabel("src/Elements/bench.png", 100, 300, 100, 50);
-            treesLabel = createImageLabel("src/Elements/trees.png", 200, 250, 150, 100);
-            cloud1Label = createImageLabel("src/Elements/cloud1.png", 50, 50, 120, 60);
-            cloud2Label = createImageLabel("src/Elements/cloud2.png", 400, 80, 120, 60);
-            castlesLabel = createImageLabel("src/Elements/castles.png", 500, 200, 200, 150);
-            floorLabel = createImageLabel("src/Elements/floor.png", -20, 500, 1323, 117);
-            mushroomLabel = createImageLabel("src/Elements/mushroom.png", 350, 350, 50, 50);
-            starLabel = createImageLabel("src/Elements/star.png", 600, 100, 40, 40);
+            benchLabel = createImageLabel("src/Elements/bench.png", 225, 500, 150, 75);
+            treesLabel = createImageLabel("src/Elements/trees.png", 820, 325, 500, 250);
+            cloud1Label = createImageLabel("src/Elements/cloud1.png", -50, 50, 500, 250);
+            cloud2Label = createImageLabel("src/Elements/cloud2.png", 400, 10, 300, 150);
+            cloud3Label = createImageLabel("src/Elements/cloud2.png", 800, 20, 500, 250);
+            castlesLabel = createImageLabel("src/Elements/castles.png", -115, 307, 475, 275);
+            floorLabel = createImageLabel("src/Elements/floor.png", -10, 285, 1300, 680);
+            mushroomLabel = createImageLabel("src/Elements/mushroom.png", 1145, 500, 150, 75);
+            starLabel = createImageLabel("src/Elements/star.png", 580, 130, 120, 50);
 
             add(benchLabel);
             add(treesLabel);
             add(cloud1Label);
             add(cloud2Label);
+            add(cloud3Label);
             add(castlesLabel);
             add(floorLabel);
             add(mushroomLabel);
@@ -40,24 +44,39 @@ public class GameMenu extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            File fontFile = new File("src/font/PixelifySans-Bold.ttf");
+            
+            PixelifySans = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(36f);
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // เพิ่ม Title
-        JLabel titleLabel = new JLabel("ARJ RUN!", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        titleLabel.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 50, 370, 45);
+        JLabel titleLabel = new JLabel("ARJ SUNTANA RUN", SwingConstants.CENTER);
+        JLabel titleLabe2 = new JLabel("Are You READY!", SwingConstants.CENTER);
+
+        titleLabel.setFont(PixelifySans);
+        titleLabel.setFont(new Font("PixelifySans-Bold", Font.BOLD, 36));
+        titleLabel.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 200, 400, 45);
         add(titleLabel);
+        titleLabe2.setFont(new Font("PixelifySans-Bold", Font.BOLD, 36));
+        titleLabe2.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 300, 400, 45);
+        add(titleLabe2);
 
         // ปุ่มเริ่มเกม
         JButton startButton = new JButton("RUN!");
-        startButton.setFont(new Font("Arial", Font.BOLD, 24));
-        startButton.setBounds((GameRunner.SCREEN_WIDTH - 78) / 2, 450, 100, 45);
+        startButton.setFont(new Font("\"Arial\"", Font.BOLD, 24));
+        startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 150, 75);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
     }
 
     // ฟังก์ชันสร้าง JLabel พร้อมใส่รูปภาพ
     private JLabel createImageLabel(String filePath, int x, int y, int width, int height) throws IOException {
-        ImageIcon icon = new ImageIcon(ImageIO.read(new File(filePath)).getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        ImageIcon icon = new ImageIcon(
+                ImageIO.read(new File(filePath)).getScaledInstance(width, height, Image.SCALE_SMOOTH));
         JLabel label = new JLabel(icon);
         label.setBounds(x, y, width, height);
         return label;

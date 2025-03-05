@@ -97,7 +97,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (player.getBounds().intersects(cat.getBounds())) {
             gameOver();
         }
-        if (cat.getX() < player.getX()) {
+        if (cat.getX() < player.getX()) { // เพิ่ม Speed เมื่อข้าม Enemy
             if (!cat.isScored()) {
                 score++;
                 scoreLabel.setText("Score: " + score);
