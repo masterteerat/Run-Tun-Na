@@ -8,8 +8,8 @@ import java.io.IOException;
 public class Player {
     private int x, y;
     private int velocityY = 0;
-    private final int gravity = 1;
-    private final int jumpForce = -18;
+    private final double gravity = 1;
+    private final int jumpForce = -30;
     private boolean isJumping = false;
     private Image playerImage;
     private final int PLAYER_WIDTH = 100;

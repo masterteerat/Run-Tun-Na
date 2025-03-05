@@ -22,6 +22,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Player player;
     private Cat cat;
 
+    private JLabel debug;
 
     public GameScreen(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
@@ -35,7 +36,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         // สร้าง player object
         player = new Player(100, 375, "src/sun.png");
         //สร้าง แมว
-        cat = new Cat(1100, 375, -5, "src/cat.png" );
+        cat = new Cat(1300, 375, -5, "src/cat.png" );
+
+        debug = new JLabel("Press B to Toggle Debug");
+        debug.setFont(new Font("Arial", Font.BOLD, 20));
+        debug.setForeground(Color.BLACK);
+        debug.setBounds(20, 20, 300,30);
+        add(debug);
     }
 
     public void startGame() {
@@ -125,12 +132,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         // วาดแมว
         cat.paint(g);
 
-        g.setColor(Color.RED);
-        g.drawRect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
-    
-        g.setColor(Color.BLUE);
-        g.drawRect(cat.getBounds().x, cat.getBounds().y, cat.getBounds().width, cat.getBounds().height);
-
+        if (isDebug) {
+            g.setColor(Color.RED);
+            g.drawRect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
+        
+            g.setColor(Color.BLUE);
+            g.drawRect(cat.getBounds().x, cat.getBounds().y, cat.getBounds().width, cat.getBounds().height);
+        }
         // แสดงข้อความ GAME OVER
         if (isGameOver) {
             g.setColor(Color.RED);
@@ -139,6 +147,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    boolean isDebug = false;
     @Override
     public void keyPressed(KeyEvent e) {
         System.out.println(e.getKeyCode());
@@ -152,6 +161,10 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_O) {
             gameOver();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_B) {  // ✅ ใช้ KeyEvent.VK_B แทนตัวเลข 66
+            isDebug = !isDebug;
+            repaint();
         }
     }
 
