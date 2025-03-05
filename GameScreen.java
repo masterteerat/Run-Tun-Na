@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import Enemies.Cat;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,11 +16,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private boolean running = false;
     private boolean isGameOver = false;
     private GameRunner gameRunner;
+    
+    private JButton retry, backMenu;
 
     private Player player;
-    private Image cat;
+    private Cat cat;
 
-    private JButton retry, backMenu;
 
     public GameScreen(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
@@ -30,13 +34,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
         // สร้าง player object
         player = new Player(100, 375, "src/sun.png");
-
-        // โหลดภาพแมว
-        try {
-            cat = ImageIO.read(new File("src/cat.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //สร้าง แมว
+        cat = new Cat(1100, 375, -5, "src/cat.png" );
     }
 
     public void startGame() {
@@ -65,8 +64,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (isGameOver) return;
 
         player.update(); // อัพเดทสถานะของ Player
+        cat.update();
 
         if (player.getY() > 500) {
+            gameOver();
+        }
+        if (player.getBounds().intersects(cat.getBounds())) {
             gameOver();
         }
     }
@@ -81,7 +84,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         retry.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                restartGame();
+                gameRunner.restartGame();
             }
         });
 
@@ -99,20 +102,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         add(backMenu);
         repaint();
     }
-
-    public void restartGame() {
-        removeButtons();
-        requestFocusInWindow();
-
-        player.resetPosition(); // รีเซ็ตตำแหน่งของ Player
-
-        isGameOver = false;
-        running = false;
-
-        addKeyListener(this);
-        startGame();
-    }
-
     private void removeButtons() {
         if (retry != null) {
             remove(retry);
@@ -134,9 +123,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         player.paint(g);
 
         // วาดแมว
-        if (cat != null) {
-            g.drawImage(cat, player.getX() + 200, player.getY(), 100, 100, this);
-        }
+        cat.paint(g);
+
+        g.setColor(Color.RED);
+        g.drawRect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
+    
+        g.setColor(Color.BLUE);
+        g.drawRect(cat.getBounds().x, cat.getBounds().y, cat.getBounds().width, cat.getBounds().height);
 
         // แสดงข้อความ GAME OVER
         if (isGameOver) {

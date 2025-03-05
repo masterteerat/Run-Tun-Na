@@ -80,4 +80,7 @@ public class Player {
     public void setJumping(boolean jumping) {
         isJumping = jumping;
     }
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, PLAYER_WIDTH, PLAYER_HEIGHT);
+    }
 }

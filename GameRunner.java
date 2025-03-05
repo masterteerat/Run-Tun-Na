@@ -39,6 +39,15 @@ public class GameRunner extends JFrame {
         gameScreen.requestFocusInWindow();
         gameScreen.startGame();
     }
+    public void restartGame() {
+        remove(gameScreen);
+        gameScreen = new GameScreen(this);
+        add(gameScreen);
+        revalidate();
+        repaint();
+        gameScreen.requestFocusInWindow();
+        gameScreen.startGame();
+    }
     
 
     public static void main(String[] args) {
