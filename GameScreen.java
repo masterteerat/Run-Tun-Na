@@ -127,7 +127,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         startGame(); // เรียก startGame() เพื่อเริ่ม Thread ใหม่
     }
     
-    
     private void removeButtons() {
         if (retry != null) {
             remove(retry);
