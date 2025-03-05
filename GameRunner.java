@@ -14,12 +14,21 @@ public class GameRunner extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        gameScreen = new GameScreen(this);
         gameMenu = new GameMenu(this);
-        gameScreen = new GameScreen();
+        showGameMenu();
 
-        add(gameMenu);
         setVisible(true);
     }
+
+    public void showGameMenu() {
+        remove(gameScreen);
+        add(gameMenu);
+        revalidate();
+        repaint();
+        gameMenu.requestFocusInWindow();
+    }
+    
     public void showGameScreen() {
         remove(gameMenu);
         add(gameScreen);

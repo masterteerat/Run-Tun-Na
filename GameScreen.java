@@ -9,6 +9,7 @@ import java.io.IOException;
 public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
+    private GameRunner gameRunner;
 
     private int playerX = 100, playerY = 375;
     private int velocityY = 0;
@@ -20,7 +21,9 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private final int PLAYER_WIDTH = 100;
     private final int PLAYER_HEIGHT = 100;
 
-    public GameScreen() {
+    public GameScreen(GameRunner gameRunner) {
+        this.gameRunner = gameRunner;
+        setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
         setBackground(Color.CYAN);
         setFocusable(true);
@@ -35,10 +38,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     }
 
     public void startGame() {
+        if (running) return;
         running = true;
         gameThread = new Thread(this);
         gameThread.start();
     }
+    
 
     @Override
     public void run() {
@@ -81,6 +86,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 velocityY = jumpForce;
             }
         }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            gameRunner.showGameMenu();
+        }
+        if (e.getKeyCode() == 79) {
+            // gameOver();
+        }
+        System.out.println(e.getKeyCode());
     }
 
     @Override
