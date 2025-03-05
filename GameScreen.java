@@ -97,11 +97,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (player.getBounds().intersects(cat.getBounds())) {
             gameOver();
         }
-        if (cat.getX() == player.getX()) {
-            System.out.println("CAT");
-            score++;
-            scoreLabel.setText("Score: " + score);
-            cat.setSpeed(cat.getSpeed() + -2);
+        if (cat.getX() < player.getX()) {
+            if (!cat.isScored()) {
+                score++;
+                scoreLabel.setText("Score: " + score);
+                cat.setScored(true);
+                cat.setSpeed(cat.getSpeed() - 2);
+            }
         }
     }
 

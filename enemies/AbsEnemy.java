@@ -13,7 +13,7 @@ public abstract class AbsEnemy extends JLabel {
     private int speed;
     private int x,y;
     private final int ENEMY_WIDTH = 100, ENEMY_HEIGHT = 100;
-
+    private boolean scored = false;
 
    public AbsEnemy(int startX, int startY, int speed, String imagePath) {
         this.x = startX;
@@ -36,6 +36,7 @@ public abstract class AbsEnemy extends JLabel {
         // ถ้าแมวออกจากหน้าจอ (x < -100) ให้รีเซ็ตไปที่ด้านขวา
         if (getX() < -100) {
             setX(1300); // รีเซ็ตตำแหน่งให้กลับไปเริ่มใหม่
+            scored = false;
         }
     }
     
@@ -65,5 +66,11 @@ public abstract class AbsEnemy extends JLabel {
     }
     public Rectangle getBounds() {
         return new Rectangle(x, y, ENEMY_WIDTH, ENEMY_HEIGHT);
+    }
+    public boolean isScored() {
+        return scored;
+    }
+    public void setScored(boolean scored) {
+        this.scored = scored;
     }
 }
