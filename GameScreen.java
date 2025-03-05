@@ -24,6 +24,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private final int PLAYER_WIDTH = 100;
     private final int PLAYER_HEIGHT = 100;
 
+    private Image cat;
+
     private JButton retry, backMenu;
 
     public GameScreen(GameRunner gameRunner) {
@@ -37,6 +39,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
         try {
             playerImage = ImageIO.read(new File("src/sun.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            cat = ImageIO.read(new File("src/cat.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -145,6 +152,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         super.paintComponent(g);
         if (playerImage != null) {
             g.drawImage(playerImage, playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT, this);
+            g.drawImage(cat, playerX+200, playerY, PLAYER_WIDTH, PLAYER_HEIGHT, this);
         }
 
         if (isGameOver) {
