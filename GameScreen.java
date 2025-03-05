@@ -18,11 +18,17 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private GameRunner gameRunner;
     
     private JButton retry, backMenu;
+    public JLabel scoreLabel;
+
+    private static int score = 0;
 
     private Player player;
     private Cat cat;
 
+    private Image floor; 
+    
     private JLabel debug;
+    private boolean isDebug = false;
 
     public GameScreen(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
@@ -34,14 +40,26 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         setLayout(null); // ต้องกำหนด Layout เป็น null เพื่อใช้ setBounds()
 
         // สร้าง player object
-        player = new Player(100, 375, "src/sun.png");
+        player = new Player(100, 475, "src/sun.png");
         //สร้าง แมว
-        cat = new Cat(1300, 375, -5, "src/cat.png" );
+        cat = new Cat(1300, 490, -5, "src/cat.png" );
+
+        try {
+            floor = ImageIO.read(new File("src/Elements/floor.png")); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        scoreLabel = new JLabel("Score: " + score);
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        scoreLabel.setForeground(Color.BLACK);
+        scoreLabel.setBounds(20, 20, 300,30);
+        add(scoreLabel);
 
         debug = new JLabel("Press B to Toggle Debug");
         debug.setFont(new Font("Arial", Font.BOLD, 20));
         debug.setForeground(Color.BLACK);
-        debug.setBounds(20, 20, 300,30);
+        debug.setBounds(20, 60, 300,30);
         add(debug);
     }
 
@@ -78,6 +96,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         if (player.getBounds().intersects(cat.getBounds())) {
             gameOver();
+        }
+        if (cat.getX() == player.getX()) {
+            System.out.println("CAT");
+            score++;
+            scoreLabel.setText("Score: " + score);
+            cat.setSpeed(cat.getSpeed() + -2);
         }
     }
 
@@ -126,9 +150,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
+        if (floor != null) {
+            g.drawImage(floor, 0, 295, getWidth(), getHeight(), this);
+        }
         // วาดตัวผู้เล่น
         player.paint(g);
-
         // วาดแมว
         cat.paint(g);
 
@@ -147,7 +173,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
     }
 
-    boolean isDebug = false;
     @Override
     public void keyPressed(KeyEvent e) {
         System.out.println(e.getKeyCode());

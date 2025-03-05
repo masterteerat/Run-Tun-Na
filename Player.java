@@ -29,8 +29,8 @@ public class Player {
         if (isJumping) {
             y += velocityY;
             velocityY += gravity;
-            if (y >= 375) {
-                y = 375;
+            if (y >= 475) {
+                y = 475;
                 isJumping = false;
                 velocityY = 0;
             }
