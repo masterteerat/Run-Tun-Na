@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.imageio.ImageIO;
@@ -9,7 +11,7 @@ import java.io.IOException;
 public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
-    private boolean isGameOver = false; // เพิ่มตัวแปร Game Over
+    private boolean isGameOver = false;
     private GameRunner gameRunner;
 
     private int playerX = 100, playerY = 375;
@@ -31,6 +33,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(this);
+        setLayout(null); // ต้องกำหนด Layout เป็น null เพื่อใช้ setBounds()
 
         try {
             playerImage = ImageIO.read(new File("src/sun.png"));
@@ -39,11 +42,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
     }
 
-
     public void startGame() {
         if (running) return;
         running = true;
-        isGameOver = false; // รีเซ็ตสถานะ Game Over
+        isGameOver = false;
+        removeButtons(); // ลบปุ่มเก่าก่อนเริ่มเกมใหม่
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -62,7 +65,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     }
 
     public void update() {
-        if (isGameOver) return; // ถ้าเกมจบแล้ว ไม่ต้องอัปเดตอะไร
+        if (isGameOver) return;
 
         if (isJumping) {
             playerY += velocityY;
@@ -82,18 +85,60 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     public void gameOver() {
         running = false;
         isGameOver = true;
-        
-        retry = new JButton("Retry");
-        retry.setFont(new Font("Arial", Font.BOLD, 45));
-        retry.setBounds(((GameRunner.SCREEN_WIDTH - 78) / 2) - 100, 450, 150, 45);
+
+        retry = new JButton("RETRY");
+        retry.setFont(new Font("Arial", Font.BOLD, 30));
+        retry.setBounds((GameRunner.SCREEN_WIDTH / 2) - 160, 450, 150, 50);
+        retry.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                restartGame();
+            }
+        });
+
+        backMenu = new JButton("EXIT");
+        backMenu.setFont(new Font("Arial", Font.BOLD, 20));
+        backMenu.setBounds((GameRunner.SCREEN_WIDTH / 2) + 10, 450, 180, 50);
+        backMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameRunner.showGameMenu();
+            }
+        });
+
         add(retry);
-
-        backMenu = new JButton("Exit");
-        backMenu.setFont(new Font("Arial", Font.BOLD, 45));
-        backMenu.setBounds(((GameRunner.SCREEN_WIDTH - 78) / 2) + 100, 450, 150, 45);
         add(backMenu);
-
         repaint();
+    }
+
+    public void restartGame() {
+        removeButtons(); // ลบปุ่มก่อนเริ่มใหม่
+        requestFocusInWindow(); // ทำให้ JPanel รับ Key Event อีกครั้ง
+    
+        // รีเซ็ตค่าทั้งหมด
+        playerX = 100;
+        playerY = 375;
+        velocityY = 0;
+        isJumping = false;
+        isGameOver = false;
+        running = false; // ตั้งค่าเป็น false ก่อนเริ่มใหม่
+    
+        addKeyListener(this); // เพิ่ม KeyListener กลับมาใหม่
+        startGame(); // เรียก startGame() เพื่อเริ่ม Thread ใหม่
+    }
+    
+    
+    private void removeButtons() {
+        if (retry != null) {
+            remove(retry);
+            retry = null;
+        }
+        if (backMenu != null) {
+            remove(backMenu);
+            backMenu = null;
+        }
+        repaint();
+        revalidate();
     }
 
     @Override
@@ -103,7 +148,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             g.drawImage(playerImage, playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT, this);
         }
 
-        // แสดงข้อความ "Game Over" ถ้าเกมจบ
         if (isGameOver) {
             g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, 48));
@@ -113,7 +157,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (isGameOver) return; // ไม่ให้กดปุ่มตอนเกมจบ
+        if (isGameOver) return;
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_UP) {
             if (!isJumping) {
@@ -124,8 +168,14 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             gameRunner.showGameMenu();
         }
-        if (e.getKeyCode() == 79) {
+        if (e.getKeyCode() == KeyEvent.VK_O) {
             gameOver();
         }
     }
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
 }

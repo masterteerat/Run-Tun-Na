@@ -24,6 +24,7 @@ public class GameRunner extends JFrame {
     public void showGameMenu() {
         remove(gameScreen);
         add(gameMenu);
+        gameScreen = new GameScreen(this);
         revalidate();
         repaint();
         gameMenu.requestFocusInWindow();
@@ -31,6 +32,7 @@ public class GameRunner extends JFrame {
     
     public void showGameScreen() {
         remove(gameMenu);
+        gameMenu = new GameMenu(this);
         add(gameScreen);
         revalidate();
         repaint();
