@@ -110,8 +110,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 if (!enemy.isScored()) {
                     score++;
                     scoreLabel.setText("Score: " + score);
-                    if (enemy.getSpeed() > -25 && score % 6 == 0) {
-                        enemy.setSpeed(Math.max(enemy.getSpeed() - 2, -25));
+                    if (enemy.getSpeed() > -25 && score % 5 == 0) {
+                        enemy.setSpeed(Math.max(enemy.getSpeed() - 3, -25));
                         System.out.println(enemy.getSpeed());
                     }
                     enemy.setScored(true);
