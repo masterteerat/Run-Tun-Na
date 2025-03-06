@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import Enemies.AbsEnemy;
 import Enemies.Cat;
 
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.awt.event.KeyListener;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
@@ -20,7 +22,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private JButton retry, backMenu;
     public JLabel scoreLabel;
 
-    private static int score = 0;
+    private int score = 0;
+    private ArrayList<AbsEnemy> enemies;
 
     private Player player;
     private Cat cat;
@@ -38,11 +41,16 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         requestFocusInWindow();
         addKeyListener(this);
         setLayout(null); // ต้องกำหนด Layout เป็น null เพื่อใช้ setBounds()
+        enemies = new ArrayList<>();
 
         // สร้าง player object
         player = new Player(100, 475, "src/sun.png");
+
         //สร้าง แมว
         cat = new Cat(1300, 490, -7, "src/cat.png" );
+        enemies.add(cat);
+
+        // โหลดและเพิ่มรูปภาพ
 
         try {
             floor = ImageIO.read(new File("src/Elements/floor.png")); 
@@ -97,16 +105,17 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (player.getBounds().intersects(cat.getBounds())) {
             gameOver();
         }
-        if (cat.getX() < player.getX()) { // เพิ่ม Speed เมื่อข้าม Enemy
-            if (!cat.isScored()) {
-                score++;
-                scoreLabel.setText("Score: " + score);
-                if (cat.getSpeed() > -25 && score % 6 == 0) {
-                    cat.setSpeed(Math.max(cat.getSpeed() - 2, -25));
-                    System.out.println(cat.getSpeed());
+        for (AbsEnemy enemy : enemies) {  // ลูปผ่านทุกตัวใน List
+            if (enemy.getX() < player.getX()) {  // เพิ่ม Speed เมื่อข้าม Enemy
+                if (!enemy.isScored()) {
+                    score++;
+                    scoreLabel.setText("Score: " + score);
+                    if (enemy.getSpeed() > -25 && score % 6 == 0) {
+                        enemy.setSpeed(Math.max(enemy.getSpeed() - 2, -25));
+                        System.out.println(enemy.getSpeed());
+                    }
+                    enemy.setScored(true);
                 }
-                
-                cat.setScored(true);
             }
         }
     }
@@ -114,6 +123,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     public void gameOver() {
         running = false;
         isGameOver = true;
+        gameRunner.setHighScore(score);
 
         retry = new JButton("RETRY");
         retry.setFont(new Font("Arial", Font.BOLD, 30));
@@ -184,7 +194,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         System.out.println(e.getKeyCode());
         if (isGameOver) return;
 
-        if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_UP) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
             player.jump();
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {

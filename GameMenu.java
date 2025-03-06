@@ -13,6 +13,10 @@ public class GameMenu extends JPanel {
     private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label,cloud3Label, castlesLabel,
             floorLabel, mushroomLabel, starLabel;
 
+    private JLabel titleLabel, titleLabe2, score;
+    private JButton startButton;
+
+
     public GameMenu(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
@@ -54,8 +58,8 @@ public class GameMenu extends JPanel {
         }
 
         // เพิ่ม Title
-        JLabel titleLabel = new JLabel("ARJ SUNTANA RUN", SwingConstants.CENTER);
-        JLabel titleLabe2 = new JLabel("Are You READY!", SwingConstants.CENTER);
+        titleLabel = new JLabel("ARJ SUNTANA RUN", SwingConstants.CENTER);
+        titleLabe2 = new JLabel("Are You READY!", SwingConstants.CENTER);
 
         titleLabel.setFont(PixelifySans);
         titleLabel.setFont(new Font("PixelifySans-Bold", Font.BOLD, 36));
@@ -66,11 +70,18 @@ public class GameMenu extends JPanel {
         add(titleLabe2);
 
         // ปุ่มเริ่มเกม
-        JButton startButton = new JButton("RUN!");
+        startButton = new JButton("RUN!");
         startButton.setFont(new Font("\"Arial\"", Font.BOLD, 24));
         startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 150, 75);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
+
+        score = new JLabel();
+        score.setFont(new Font("Arial", Font.BOLD, 24));
+        score.setBounds(15, 10, 600, 50);
+        score.setText("High Score:" + gameRunner.getHighScore());
+        add(score);
+
     }
 
     // ฟังก์ชันสร้าง JLabel พร้อมใส่รูปภาพ

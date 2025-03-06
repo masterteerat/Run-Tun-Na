@@ -4,6 +4,8 @@ public class GameRunner extends JFrame {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
 
+    private static int highScore;
+
     private GameMenu gameMenu;
     private GameScreen gameScreen;
 
@@ -47,6 +49,14 @@ public class GameRunner extends JFrame {
         repaint();
         gameScreen.requestFocusInWindow();
         gameScreen.startGame();
+    }
+    public static void setHighScore(int highScore) {
+        if (highScore > GameRunner.highScore) {
+            GameRunner.highScore = highScore;
+        }
+    }
+    public static int getHighScore() {
+        return highScore;
     }
     
     public static void main(String[] args) {

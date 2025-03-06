@@ -5,6 +5,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 
@@ -14,6 +16,7 @@ public abstract class AbsEnemy extends JLabel {
     private int x,y;
     private final int ENEMY_WIDTH = 100, ENEMY_HEIGHT = 100;
     private boolean scored = false;
+
 
    public AbsEnemy(int startX, int startY, int speed, String imagePath) {
         this.x = startX;
