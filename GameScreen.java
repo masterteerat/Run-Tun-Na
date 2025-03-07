@@ -123,7 +123,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     public void gameOver() {
         running = false;
         isGameOver = true;
-        gameRunner.setHighScore(score);
+
+        // setHighScore(score);
 
         retry = new JButton("RETRY");
         retry.setFont(new Font("Arial", Font.BOLD, 30));
@@ -180,6 +181,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         
             g.setColor(Color.BLUE);
             g.drawRect(cat.getBounds().x, cat.getBounds().y, cat.getBounds().width, cat.getBounds().height);
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("Cat Speed: " + cat.getSpeed(), 1060, 50);
+
         }
         // แสดงข้อความ GAME OVER
         if (isGameOver) {

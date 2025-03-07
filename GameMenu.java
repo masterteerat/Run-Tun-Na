@@ -13,8 +13,10 @@ public class GameMenu extends JPanel {
     private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label,cloud3Label, castlesLabel,
             floorLabel, mushroomLabel, starLabel;
 
-    private JLabel titleLabel, titleLabe2, score;
+    private JLabel titleLabel, titleLabe2;
     private JButton startButton;
+
+    private static int highScore;
 
 
     public GameMenu(GameRunner gameRunner) {
@@ -75,13 +77,6 @@ public class GameMenu extends JPanel {
         startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 150, 75);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
-
-        score = new JLabel();
-        score.setFont(new Font("Arial", Font.BOLD, 24));
-        score.setBounds(15, 10, 600, 50);
-        score.setText("High Score:" + gameRunner.getHighScore());
-        add(score);
-
     }
 
     // ฟังก์ชันสร้าง JLabel พร้อมใส่รูปภาพ
@@ -92,4 +87,17 @@ public class GameMenu extends JPanel {
         label.setBounds(x, y, width, height);
         return label;
     }
+    @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("High Score: " + highScore, 1060, 50);
+        }
+        public void setHighScore(int score) {
+            if (score > highScore) {
+                highScore = score;
+            }
+        }
 }
