@@ -2,6 +2,7 @@ import javax.swing.*;
 
 import Enemies.AbsEnemy;
 import Enemies.Cat;
+import Enemies.Student;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,7 +27,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private ArrayList<AbsEnemy> enemies;
 
     private Player player;
-    private Cat cat;
+    private Student student;
 
     private Image floor; 
     
@@ -47,8 +48,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         player = new Player(100, 475, "src/sun.png");
 
         //สร้าง แมว
-        cat = new Cat(1300, 490, -7, "src/cat.png" );
-        enemies.add(cat);
+        student = new Student(1300, 490, -7, "src/student.png" );
+        enemies.add(student);
 
         // โหลดและเพิ่มรูปภาพ
 
@@ -97,12 +98,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (isGameOver) return;
 
         player.update(); // อัพเดทสถานะของ Player
-        cat.update();
+        student.update();
 
         if (player.getY() > 500) {
             gameOver();
         }
-        if (player.getBounds().intersects(cat.getBounds())) {
+        if (player.getBounds().intersects(student.getBounds())) {
             gameOver();
         }
         for (AbsEnemy enemy : enemies) {  // ลูปผ่านทุกตัวใน List
@@ -173,18 +174,18 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         // วาดตัวผู้เล่น
         player.paint(g);
         // วาดแมว
-        cat.paint(g);
+        student.paint(g);
 
         if (isDebug) {
             g.setColor(Color.RED);
             g.drawRect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
         
             g.setColor(Color.BLUE);
-            g.drawRect(cat.getBounds().x, cat.getBounds().y, cat.getBounds().width, cat.getBounds().height);
+            g.drawRect(student.getBounds().x, student.getBounds().y, student.getBounds().width, student.getBounds().height);
 
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("Cat Speed: " + cat.getSpeed(), 1060, 50);
+            g.drawString("Enemy Speed: " + student.getSpeed(), 1020, 50);
 
         }
         // แสดงข้อความ GAME OVER
