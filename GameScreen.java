@@ -120,16 +120,16 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         int enemyType = random.nextInt(4);
         switch (enemyType) {
             case 0:
-                currentEnemy = new Enemy(1300, 490, "src/student.png");
+                currentEnemy = new Enemy(1300, 480, "src/student.png");
                 break;
             case 1:
                 currentEnemy = new Enemy(1300, 200, "src/bird.png");
                 break;
             case 2:
-                currentEnemy = new Enemy(1300, 490, "src/harns.png");
+                currentEnemy = new Enemy(1300, 450,130, 130, "src/harns.png");
                 break;
             default:
-                currentEnemy = new Enemy(1300, 490, "src/harnsF.png");
+                currentEnemy = new Enemy(1300, 440, 140, 140, "src/harnsF.png");
                 break;
         }
     }

@@ -11,10 +11,9 @@ public class GameMenu extends JPanel {
 
     private Font PixelifySans = new Font("PixelifySans-Bold", Font.BOLD, 36);
 
-    private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label,cloud3Label, castlesLabel,
-            floorLabel, mushroomLabel, starLabel;
+    private JLabel benchLabel, treesLabel, CloudSunLabel, cloud2Label,cloud3Label, castlesLabel,
+            floorLabel, mushroomLabel, starLabel,CATLabel, startImg;
 
-    private Image startImg;
     private JButton startButton;
 
     private JLabel titleLabel, titleLabe2;
@@ -29,25 +28,29 @@ public class GameMenu extends JPanel {
         try {
             benchLabel = createImageLabel("src/Elements/bench.png", 225, 500, 150, 75);
             treesLabel = createImageLabel("src/Elements/trees.png", 820, 325, 500, 250);
-            cloud1Label = createImageLabel("src/Elements/cloud1.png", -50, 50, 500, 250);
+            CloudSunLabel = createImageLabel("src/Elements/cloudSun.png", -50, 50, 500, 250);
             cloud2Label = createImageLabel("src/Elements/cloud2.png", 400, 10, 300, 150);
-            cloud3Label = createImageLabel("src/Elements/cloud2.png", 800, 20, 500, 250);
+            cloud3Label = createImageLabel("src/Elements/cloud3.png", 800, 20, 500, 250);
             castlesLabel = createImageLabel("src/Elements/castles.png", -115, 307, 475, 275);
             floorLabel = createImageLabel("src/Elements/floor.png", -10, 285, 1300, 680);
             mushroomLabel = createImageLabel("src/Elements/mushroom.png", 1145, 500, 150, 75);
+            CATLabel = createImageLabel("src/Elements/catAuan.png", 795, 488, 150, 100);
             starLabel = createImageLabel("src/Elements/star.png", 580, 130, 120, 50);
-            
-            startImg = ImageIO.read(new File("src/Elements/startButt.png")); 
+            startImg = createImageLabel("src/Elements/startButt.png", ((GameRunner.SCREEN_WIDTH - 400) / 2), 350, 400, 225);
 
             add(benchLabel);
             add(treesLabel);
-            add(cloud1Label);
+            add(CloudSunLabel);
             add(cloud2Label);
             add(cloud3Label);
             add(castlesLabel);
             add(floorLabel);
             add(mushroomLabel);
             add(starLabel);
+            add(CATLabel);
+            add(startImg);
+      
+           
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,14 +81,15 @@ public class GameMenu extends JPanel {
         titleLabe2.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 300, 400, 45);
         add(titleLabe2);
 
-        startButton = new JButton(new ImageIcon(startImg));
-        startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 250, 100);
+        startButton = new JButton();
+        startButton.setBounds((GameRunner.SCREEN_WIDTH - 400) / 2, 350, 400, 225);
+        startButton.setContentAreaFilled(false);
+        // startButton.setBorderPainted(false);
+        startButton.setOpaque(false);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
-        
     }
 
-    // ฟังก์ชันสร้าง JLabel พร้อมใส่รูปภาพ
     private JLabel createImageLabel(String filePath, int x, int y, int width, int height) throws IOException {
         ImageIcon icon = new ImageIcon(
                 ImageIO.read(new File(filePath)).getScaledInstance(width, height, Image.SCALE_SMOOTH));
