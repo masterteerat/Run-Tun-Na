@@ -177,8 +177,10 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         // วาดตัวผู้เล่น
         player.paint(g);
-        // วาดแมว
-        student.paint(g);
+        
+        for (AbsEnemy enemy : enemies) {
+            enemy.paint(g);
+        }
 
         if (isDebug) {
             g.setColor(Color.RED);
@@ -225,4 +227,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
+
+    public int getScore() {
+        return score;
+    }
 }

@@ -59,6 +59,7 @@ public class GameRunner extends JFrame {
         return highScore;
     }
     
+
     public static void main(String[] args) {
         new GameRunner();
     }
