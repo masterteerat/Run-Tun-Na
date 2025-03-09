@@ -107,7 +107,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                     score++;
                     scoreLabel.setText("Score: " + score);
                     if (score % 5 == 0 && ENEMY_SPEED > -25) {
-                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
+                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 2, -25);
                 }
                 currentEnemy.setScored(true);
             }
@@ -123,7 +123,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 currentEnemy = new Enemy(1300, 480, "src/student.png");
                 break;
             case 1:
-                currentEnemy = new Enemy(1300, 200, "src/bird.png");
+                currentEnemy = new Enemy(1300, random.nextInt(200, 350), "src/bird.png");
+                System.out.println(currentEnemy.getY());
                 break;
             case 2:
                 currentEnemy = new Enemy(1300, 450,130, 130, "src/harns.png");
