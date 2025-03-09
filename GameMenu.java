@@ -22,7 +22,7 @@ public class GameMenu extends JPanel {
     public GameMenu(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
         setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
-        setBackground(Color.decode("#FAFEFF"));
+        setBackground(Color.decode("#E8FEFF"));
         setLayout(null);
 
         // โหลดและเพิ่มรูปภาพ

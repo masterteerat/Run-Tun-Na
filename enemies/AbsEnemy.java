@@ -35,13 +35,14 @@ public abstract class AbsEnemy extends JLabel {
     }
     public void update() {
         setX(getX() + speed); // ลดค่า X เพื่อลดระยะทางไปทางซ้าย
-
-        // ถ้าแมวออกจากหน้าจอ (x < -100) ให้รีเซ็ตไปที่ด้านขวา
+    
+        // ถ้าออกจากจอให้รีเซ็ตตำแหน่ง แต่ไม่สร้างใหม่
         if (getX() < -100) {
-            setX(1300); // รีเซ็ตตำแหน่งให้กลับไปเริ่มใหม่
+            setX(1300);
             scored = false;
         }
     }
+    
     
     public int getX() {
         return x;
