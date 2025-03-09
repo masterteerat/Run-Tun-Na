@@ -5,7 +5,6 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameScreen extends JPanel implements Runnable, KeyListener {
@@ -22,11 +21,14 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Enemy currentEnemy;
     private Player player;
     
-        private Image floor;
-        private JLabel debug;
-        private boolean isDebug = false;
-        ArrayList<Enemy> enemies;
-        private Random random = new Random();
+    private Image floor;
+    private Image cloud1;
+    private Image cloud2;
+    private Image cloud3;
+
+    private JLabel debug;
+    private boolean isDebug = false;
+    ArrayList<Enemy> enemies;
     
         public GameScreen(GameRunner gameRunner) {
             this.gameRunner = gameRunner;
@@ -37,27 +39,30 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             addKeyListener(this);
             setLayout(null);
             
-
             try {
                 floor = ImageIO.read(new File("src/Elements/floor.png"));
+                cloud1 = ImageIO.read(new File("src/Elements/cloud2.png"));
+                cloud2 = ImageIO.read(new File("src/Elements/cloud3.png")); 
+                cloud3 = ImageIO.read(new File("src/Elements/cloud3.png"));
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }
             
             ENEMY_SPEED = -7;
             scoreLabel = new JLabel("Score: " + score);
-            scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            scoreLabel.setFont(gameRunner.getFont());
             scoreLabel.setForeground(Color.BLACK);
             scoreLabel.setBounds(20, 20, 300, 30);
             add(scoreLabel);
     
             debug = new JLabel("Press B to Toggle Debug");
-            debug.setFont(new Font("Arial", Font.BOLD, 20));
+            debug.setFont(gameRunner.getFont());
             debug.setForeground(Color.BLACK);
             debug.setBounds(20, 60, 300, 30);
             add(debug);
     
-            player = new Player(100, 475, "src/sun.png");
+            player = new Player(100, 475, "src/sun1.png", "src/sun2.png", "src/sun3.png");
             enemies = new ArrayList<>();
             enemies.add(new Enemy(1300, 480, "src/student.png"));
             enemies.add(new Enemy(1300, 250, "src/bird.png"));
@@ -90,10 +95,17 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
     
         public void update() {
-            if (isGameOver) 
-                return;
+            if (isGameOver) {return;}
+
+            updateBackground();
             player.update();
-    
+            
+            if (!player.isJumping()) {
+                player.startWalking();
+            } else {
+                player.stopWalking();
+            }
+
             if (player.getY() > 500) {
                 gameOver();
             }
@@ -104,9 +116,9 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             if (currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
                 score++;
                 scoreLabel.setText("Score: " + score);
-                    if (score % 2 == 0 && ENEMY_SPEED > -15) {
+                    if (score % 5 == 0 && ENEMY_SPEED > -25) {
                         System.out.println("Speed got increased");
-                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -15);
+                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
                     }
                 currentEnemy.setScored(true);
                 }
@@ -115,26 +127,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 System.out.println("Speed" + ENEMY_SPEED);
                 spawnEnemy();
             }
-            // if (currentEnemy != null) {
-            //     currentEnemy.update(ENEMY_SPEED);
-    
-            //     if (player.getBounds().intersects(currentEnemy.getBounds())) {
-            //         gameOver();
-            //     }
-    
-            //     if (currentEnemy.getX() <= -100) {
-            //         spawnEnemy();
-            //     }
-    
-            //     if (currentEnemy != null && currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
-            //         score++;
-            //         scoreLabel.setText("Score: " + score);
-            //         if (score % 5 == 0 && ENEMY_SPEED > -25) {
-            //             ENEMY_SPEED = Math.max(ENEMY_SPEED - 2, -25);
-            //     }
-            //     currentEnemy.setScored(true);
-            //     }
-            // } 
         }
 
     private void spawnEnemy() {
@@ -143,24 +135,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         currentEnemy = enemies.get(enemyType);
         currentEnemy.setX(1300);
         currentEnemy.setScored(false);
-
-    
-        
-        // switch (enemyType) {
-        //     case 0:
-        //         currentEnemy = enemies.get(enemyType);
-        //         break;
-        //     case 1:
-        //         currentEnemy = new Enemy(1300, random.nextInt(200, 350), "src/bird.png");
-        //         System.out.println(currentEnemy.getY());
-        //         break;
-        //     case 2:
-        //         currentEnemy = new Enemy(1300, 450,130, 130, "src/harns.png");
-        //         break;
-        //     default:
-        //         currentEnemy = new Enemy(1300, 440, 140, 140, "src/harnsF.png");
-        //         break;
-        // }
     }
     
     public void gameOver() {
@@ -168,12 +142,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         isGameOver = true;
 
         retry = new JButton("RETRY");
-        retry.setFont(new Font("Arial", Font.BOLD, 30));
+        retry.setFont(gameRunner.getFont());
         retry.setBounds((GameRunner.SCREEN_WIDTH / 2) - 160, 450, 150, 50);
         retry.addActionListener(e -> gameRunner.restartGame());
 
         backMenu = new JButton("EXIT");
-        backMenu.setFont(new Font("Arial", Font.BOLD, 20));
+        backMenu.setFont(gameRunner.getFont());
         backMenu.setBounds((GameRunner.SCREEN_WIDTH / 2) + 10, 450, 180, 50);
         backMenu.addActionListener(e -> gameRunner.showGameMenu());
 
@@ -193,15 +167,34 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         repaint();
         revalidate();
+        }
+
+    private int cloudX1 = 500, cloudX2 = 100, cloudX3 = 1100;
+    private int cloudSpeed = -2;
+
+    private void bgMoving(Graphics g) {
+        if (cloud1 != null && cloud2 != null && cloud3 != null) {
+            g.drawImage(cloud1, cloudX1, -100, 600, 400, this);
+            g.drawImage(cloud2, cloudX2, 30, 500, 300, this);
+            g.drawImage(cloud3, cloudX3, 70, 400, 220, this);
+        }
+    }
+    private void updateBackground() {
+        cloudX1 += cloudSpeed;
+        cloudX2 += cloudSpeed;
+        cloudX3 += cloudSpeed;
+    
+        if (cloudX1 < -600){cloudX1 = 1280;}
+        if (cloudX2 < -450){cloudX2 = 1280;}
+        if (cloudX3 < -400){cloudX3 = 1280;}
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
+        @Override
+        protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (floor != null) {
-            g.drawImage(floor, 0, 295, getWidth(), getHeight(), this);
-        }
+        if (floor != null) {g.drawImage(floor, 0, 295, getWidth(), getHeight(), this);}
+        bgMoving(g);
 
         player.paint(g);
 
@@ -218,7 +211,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 g.drawRect(currentEnemy.getBounds().x, currentEnemy.getBounds().y, currentEnemy.getBounds().width, currentEnemy.getBounds().height);
             }
             g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.setFont(gameRunner.getFont());
             g.drawString("Enemy Speed: " + ENEMY_SPEED, 1000, 50);
         }
 

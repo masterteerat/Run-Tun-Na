@@ -4,12 +4,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class GameMenu extends JPanel {
     private GameRunner gameRunner;
-
-    private Font PixelifySans = new Font("PixelifySans-Bold", Font.BOLD, 36);
 
     private JLabel benchLabel, treesLabel, CloudSunLabel, cloud2Label,cloud3Label, castlesLabel,
             floorLabel, mushroomLabel, starLabel,CATLabel, startImg;
@@ -24,7 +21,6 @@ public class GameMenu extends JPanel {
         setBackground(Color.decode("#E8FEFF"));
         setLayout(null);
 
-        // โหลดและเพิ่มรูปภาพ
         try {
             benchLabel = createImageLabel("src/Elements/bench.png", 225, 500, 150, 75);
             treesLabel = createImageLabel("src/Elements/trees.png", 820, 325, 500, 250);
@@ -55,36 +51,22 @@ public class GameMenu extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        try {
-            // โหลดฟอนต์จาก classpath
-            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("src/fonts/PixelifySans-Bold.ttf");
-            if (fontStream == null) {
-                throw new IOException("Font file not found in resources");
-            }
-            PixelifySans = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(36f);
-        } catch (Exception e) {
-            e.printStackTrace();
-            PixelifySans = new Font("Arial", Font.BOLD, 36); // ใช้ฟอนต์ Arial แทนหากโหลดไม่ได้
-        }
         
-
-        // เพิ่ม Title
         titleLabel = new JLabel("ARJ SUNTANA RUN", SwingConstants.CENTER);
         titleLabe2 = new JLabel("Are You READY!", SwingConstants.CENTER);
 
-        titleLabel.setFont(PixelifySans);
+        titleLabel.setFont(gameRunner.getFont());
         titleLabel.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 200, 400, 45);
         add(titleLabel);
 
-        titleLabe2.setFont(PixelifySans);
+        titleLabe2.setFont(gameRunner.getFont());
         titleLabe2.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 300, 400, 45);
         add(titleLabe2);
 
         startButton = new JButton();
-        startButton.setBounds((GameRunner.SCREEN_WIDTH - 400) / 2, 350, 400, 225);
+        startButton.setBounds(530, 425, 220, 60);
         startButton.setContentAreaFilled(false);
-        // startButton.setBorderPainted(false);
+        startButton.setBorderPainted(false);
         startButton.setOpaque(false);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
@@ -102,9 +84,9 @@ public class GameMenu extends JPanel {
             super.paintComponent(g);
 
             g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.setFont(gameRunner.getFont());
             if (gameRunner.getHighScore() < 100) {
-                g.drawString("Highest Score: " + gameRunner.getHighScore(), 1000, 50);
+                g.drawString("Highest Score: " + gameRunner.getHighScore(), 930, 50);
         }
         else {g.drawString("Highest Score: " + gameRunner.getHighScore(), 980, 50);}
     }

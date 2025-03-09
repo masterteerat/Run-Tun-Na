@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.awt.Font;
 import java.io.*;
 
 public class GameRunner extends JFrame {
@@ -6,7 +8,9 @@ public class GameRunner extends JFrame {
     public static final int SCREEN_HEIGHT = 720;
 
     private static int highScore;
-    private static final String SCORE_FILE = "highscore.txt"; // กำหนดชื่อไฟล์สำหรับเก็บคะแนนสูงสุด
+    private static final String SCORE_FILE = "highscore.txt";
+
+    private Font font;
 
     private GameMenu gameMenu;
     private GameScreen gameScreen;
@@ -18,7 +22,18 @@ public class GameRunner extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        loadHighScore(); // โหลด high score ตอนเริ่มเกม
+        try {
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("src/fonts/PressStart2P.ttf");
+            if (fontStream == null) {
+                throw new IOException();
+            }
+            font = Font.createFont(Font.PLAIN, fontStream).deriveFont(18f);
+        } catch (Exception e) {
+            e.printStackTrace();
+            font = new Font("Arial", Font.BOLD, 36);
+        }
+
+        loadHighScore();
 
         gameScreen = new GameScreen(this);
         gameMenu = new GameMenu(this);
@@ -59,7 +74,7 @@ public class GameRunner extends JFrame {
     public void setHighScore(int score) {
         if (score > highScore) {
             highScore = score;
-            saveHighScore(); // บันทึกคะแนนเมื่อมีการทำลายสถิติ
+            saveHighScore();
         }
     }
 
@@ -74,7 +89,7 @@ public class GameRunner extends JFrame {
                 highScore = Integer.parseInt(line.trim());
             }
         } catch (IOException | NumberFormatException e) {
-            highScore = 0; // ถ้าไฟล์ไม่มีหรือเกิดข้อผิดพลาด ให้เริ่มต้นที่ 0
+            highScore = 0;
         }
     }
 
@@ -87,7 +102,10 @@ public class GameRunner extends JFrame {
     }
     public void resetHighScore() {
         highScore = 0;
-        saveHighScore(); // อัพเดทไฟล์ให้เป็น 0
+        saveHighScore();
+    }
+    public Font getFont() {
+        return font;
     }
     
 
