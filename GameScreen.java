@@ -1,7 +1,4 @@
 import javax.swing.*;
-import Enemies.*;
-import Item.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.imageio.ImageIO;
@@ -9,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
@@ -20,14 +18,14 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     public JLabel scoreLabel;
     private int score = 0;
 
-    private static int ENEMY_SPEED = -7;
-        private Enemy currentEnemy = null;
-        private Player player;
+    private int ENEMY_SPEED = -7;
+    private Enemy currentEnemy;
+    private Player player;
     
         private Image floor;
         private JLabel debug;
         private boolean isDebug = false;
-    
+        ArrayList<Enemy> enemies;
         private Random random = new Random();
     
         public GameScreen(GameRunner gameRunner) {
@@ -38,13 +36,15 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             requestFocusInWindow();
             addKeyListener(this);
             setLayout(null);
-    
+            
+
             try {
                 floor = ImageIO.read(new File("src/Elements/floor.png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-    
+            
+            ENEMY_SPEED = -7;
             scoreLabel = new JLabel("Score: " + score);
             scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
             scoreLabel.setForeground(Color.BLACK);
@@ -58,6 +58,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             add(debug);
     
             player = new Player(100, 475, "src/sun.png");
+            enemies = new ArrayList<>();
+            enemies.add(new Enemy(1300, 480, "src/student.png"));
+            enemies.add(new Enemy(1300, 250, "src/bird.png"));
+            enemies.add(new Enemy(1300, 450,130, 130, "src/harns.png"));
+            enemies.add(new Enemy(1300, 440, 140, 140, "src/harnsF.png"));
         }
     
         public void startGame() {
@@ -65,9 +70,10 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             running = true;
             isGameOver = false;
             removeButtons();
+            spawnEnemy();
             gameThread = new Thread(this);
             gameThread.start();
-            spawnEnemy();
+            
         }
     
         @Override
@@ -84,55 +90,77 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
     
         public void update() {
-            if (isGameOver) return;
-    
+            if (isGameOver) 
+                return;
             player.update();
     
             if (player.getY() > 500) {
                 gameOver();
             }
-    
-            if (currentEnemy != null) {
-                currentEnemy.update(ENEMY_SPEED);
-    
-                if (player.getBounds().intersects(currentEnemy.getBounds())) {
-                    gameOver();
-                }
-    
-                if (currentEnemy.getX() <= -100) {
-                    currentEnemy = null;
-                }
-    
-                if (currentEnemy != null && currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
-                    score++;
-                    scoreLabel.setText("Score: " + score);
-                    if (score % 5 == 0 && ENEMY_SPEED > -25) {
-                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 2, -25);
-                }
-                currentEnemy.setScored(true);
+            currentEnemy.update(ENEMY_SPEED);
+            if (player.getBounds().intersects(currentEnemy.getBounds())){
+                gameOver();
             }
-        } else {
-            spawnEnemy();
+            if (currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
+                score++;
+                scoreLabel.setText("Score: " + score);
+                    if (score % 2 == 0 && ENEMY_SPEED > -15) {
+                        System.out.println("Speed got increased");
+                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -15);
+                    }
+                currentEnemy.setScored(true);
+                }
+            if (currentEnemy.getX() <= -100) {
+                System.out.println("Spawn get called!");
+                System.out.println("Speed" + ENEMY_SPEED);
+                spawnEnemy();
+            }
+            // if (currentEnemy != null) {
+            //     currentEnemy.update(ENEMY_SPEED);
+    
+            //     if (player.getBounds().intersects(currentEnemy.getBounds())) {
+            //         gameOver();
+            //     }
+    
+            //     if (currentEnemy.getX() <= -100) {
+            //         spawnEnemy();
+            //     }
+    
+            //     if (currentEnemy != null && currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
+            //         score++;
+            //         scoreLabel.setText("Score: " + score);
+            //         if (score % 5 == 0 && ENEMY_SPEED > -25) {
+            //             ENEMY_SPEED = Math.max(ENEMY_SPEED - 2, -25);
+            //     }
+            //     currentEnemy.setScored(true);
+            //     }
+            // } 
         }
-    }
 
     private void spawnEnemy() {
-        int enemyType = random.nextInt(4);
-        switch (enemyType) {
-            case 0:
-                currentEnemy = new Enemy(1300, 480, "src/student.png");
-                break;
-            case 1:
-                currentEnemy = new Enemy(1300, random.nextInt(200, 350), "src/bird.png");
-                System.out.println(currentEnemy.getY());
-                break;
-            case 2:
-                currentEnemy = new Enemy(1300, 450,130, 130, "src/harns.png");
-                break;
-            default:
-                currentEnemy = new Enemy(1300, 440, 140, 140, "src/harnsF.png");
-                break;
-        }
+        int enemyType = ThreadLocalRandom.current().nextInt(0, 4);
+        System.out.println(enemyType);
+        currentEnemy = enemies.get(enemyType);
+        currentEnemy.setX(1300);
+        currentEnemy.setScored(false);
+
+    
+        
+        // switch (enemyType) {
+        //     case 0:
+        //         currentEnemy = enemies.get(enemyType);
+        //         break;
+        //     case 1:
+        //         currentEnemy = new Enemy(1300, random.nextInt(200, 350), "src/bird.png");
+        //         System.out.println(currentEnemy.getY());
+        //         break;
+        //     case 2:
+        //         currentEnemy = new Enemy(1300, 450,130, 130, "src/harns.png");
+        //         break;
+        //     default:
+        //         currentEnemy = new Enemy(1300, 440, 140, 140, "src/harnsF.png");
+        //         break;
+        // }
     }
     
     public void gameOver() {
