@@ -1,8 +1,8 @@
 import javax.swing.*;
 
 import Enemies.AbsEnemy;
-import Enemies.Cat;
 import Enemies.Student;
+import Item.Cat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -50,6 +50,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         //สร้าง แมว
         student = new Student(1300, 490, -7, "src/student.png" );
         enemies.add(student);
+
+        
 
         // โหลดและเพิ่มรูปภาพ
 
@@ -196,6 +198,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         // แสดงข้อความ GAME OVER
         if (isGameOver) {
+            gameRunner.setHighScore(score);
             g.setColor(Color.RED);
             g.setFont(new Font("Arial", Font.BOLD, 48));
             g.drawString("GAME OVER", getWidth() / 2 - 120, getHeight() / 2);
@@ -227,8 +230,4 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
-
-    public int getScore() {
-        return score;
-    }
 }

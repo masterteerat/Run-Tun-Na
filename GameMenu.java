@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class GameMenu extends JPanel {
     private GameRunner gameRunner;
@@ -13,11 +14,10 @@ public class GameMenu extends JPanel {
     private JLabel benchLabel, treesLabel, cloud1Label, cloud2Label,cloud3Label, castlesLabel,
             floorLabel, mushroomLabel, starLabel;
 
-    private JLabel titleLabel, titleLabe2;
+    private Image startImg;
     private JButton startButton;
 
-    private static int highScore;
-
+    private JLabel titleLabel, titleLabe2;
 
     public GameMenu(GameRunner gameRunner) {
         this.gameRunner = gameRunner;
@@ -36,6 +36,8 @@ public class GameMenu extends JPanel {
             floorLabel = createImageLabel("src/Elements/floor.png", -10, 285, 1300, 680);
             mushroomLabel = createImageLabel("src/Elements/mushroom.png", 1145, 500, 150, 75);
             starLabel = createImageLabel("src/Elements/star.png", 580, 130, 120, 50);
+            
+            startImg = ImageIO.read(new File("src/Elements/startButt.png")); 
 
             add(benchLabel);
             add(treesLabel);
@@ -50,33 +52,37 @@ public class GameMenu extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
-            File fontFile = new File("src/font/PixelifySans-Bold.ttf");
-            
-            PixelifySans = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(36f);
-        } 
-        catch (Exception e) {
+            // โหลดฟอนต์จาก classpath
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("src/fonts/PixelifySans-Bold.ttf");
+            if (fontStream == null) {
+                throw new IOException("Font file not found in resources");
+            }
+            PixelifySans = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(36f);
+        } catch (Exception e) {
             e.printStackTrace();
+            PixelifySans = new Font("Arial", Font.BOLD, 36); // ใช้ฟอนต์ Arial แทนหากโหลดไม่ได้
         }
+        
 
         // เพิ่ม Title
         titleLabel = new JLabel("ARJ SUNTANA RUN", SwingConstants.CENTER);
         titleLabe2 = new JLabel("Are You READY!", SwingConstants.CENTER);
 
         titleLabel.setFont(PixelifySans);
-        titleLabel.setFont(new Font("PixelifySans-Bold", Font.BOLD, 36));
         titleLabel.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 200, 400, 45);
         add(titleLabel);
-        titleLabe2.setFont(new Font("PixelifySans-Bold", Font.BOLD, 36));
+
+        titleLabe2.setFont(PixelifySans);
         titleLabe2.setBounds((GameRunner.SCREEN_WIDTH - 370) / 2, 300, 400, 45);
         add(titleLabe2);
 
-        // ปุ่มเริ่มเกม
-        startButton = new JButton("RUN!");
-        startButton.setFont(new Font("\"Arial\"", Font.BOLD, 24));
-        startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 150, 75);
+        startButton = new JButton(new ImageIcon(startImg));
+        startButton.setBounds((GameRunner.SCREEN_WIDTH - 130) / 2, 400, 250, 100);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
+        
     }
 
     // ฟังก์ชันสร้าง JLabel พร้อมใส่รูปภาพ
@@ -93,11 +99,9 @@ public class GameMenu extends JPanel {
 
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("High Score: " + highScore, 1060, 50);
+            if (gameRunner.getHighScore() < 100) {
+                g.drawString("Highest Score: " + gameRunner.getHighScore(), 1000, 50);
         }
-        public void setHighScore(int score) {
-            if (score > highScore) {
-                highScore = score;
-            }
-        }
+        else {g.drawString("Highest Score: " + gameRunner.getHighScore(), 980, 50);}
+    }
 }

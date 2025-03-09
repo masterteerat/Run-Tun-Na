@@ -1,9 +1,10 @@
 package Item;
 
+import Enemies.AbsEnemy;
 import Enemies.enemy;
 
 public abstract class AbsItem extends AbsEnemy {
-    public AbsItem(Image img, int speed) {
-        super(img, speed);
+ public AbsItem(int startX, int startY, int speed, String imagePath) {
+        super(startX, startY, speed, imagePath);
     }
 }
