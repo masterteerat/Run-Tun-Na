@@ -98,15 +98,19 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (isGameOver) return;
 
         player.update(); // อัพเดทสถานะของ Player
-        student.update();
-
+    
         if (player.getY() > 500) {
             gameOver();
         }
-        if (player.getBounds().intersects(student.getBounds())) {
-            gameOver();
+        for (AbsEnemy enemy : enemies) {
+            if (player.getBounds().intersects(enemy.getBounds())) {
+                gameOver();
+                break;
+            }
         }
         for (AbsEnemy enemy : enemies) {  // ลูปผ่านทุกตัวใน List
+            enemy.update(); // ทำกับ enemy ทุกตัว
+
             if (enemy.getX() < player.getX()) {  // เพิ่ม Speed เมื่อข้าม Enemy
                 if (!enemy.isScored()) {
                     score++;
@@ -185,7 +189,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("Enemy Speed: " + student.getSpeed(), 1020, 50);
+            g.drawString("Enemy Speed: " + student.getSpeed(), 1000, 50);
 
         }
         // แสดงข้อความ GAME OVER
