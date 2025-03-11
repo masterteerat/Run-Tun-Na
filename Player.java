@@ -10,6 +10,8 @@ public class Player {
     private final double gravity = 1;
     private final int jumpForce = -25;
     private boolean isJumping = false;
+    private boolean isShield = false;
+    private boolean isCat = false;
 
     private Image[] walkFrames = new Image[3];
     private int currentFrame = 0;
@@ -86,6 +88,10 @@ public class Player {
     public void setY(int y) { this.y = y; }
     public boolean isJumping() { return isJumping; }
     public void setJumping(boolean jumping) { isJumping = jumping; }
+    public boolean isShield() { return isShield; }
+    public void setShield(boolean shield) { isShield = shield; }
+    public boolean isCat() { return isCat; }
+    public void setCat(boolean cat) { isCat = cat; }
 
     public Rectangle getBounds() {
         return new Rectangle(x + 20, y, PLAYER_WIDTH - 40, PLAYER_HEIGHT);

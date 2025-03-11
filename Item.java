@@ -1,5 +1,3 @@
-import Enemy;
-
 public abstract class Item extends Enemy {
     public Item(int startX, int startY, String imagePath) {
         super(startX, startY, imagePath);

@@ -11,7 +11,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
     private boolean isGameOver = false;
-    private boolean isShield = false;
     private GameRunner gameRunner;
 
     private JButton retry, backMenu;
@@ -22,6 +21,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Enemy currentEnemy;
     private Item currentItem;
     private Player player;
+    private int catScoreCount = 0;
     
     private Image floor;
     private Image cloud1;
@@ -64,23 +64,23 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         scoreLabel.setBounds(20, 20, 300, 30);
         add(scoreLabel);
 
-        debug = new JLabel("Press B to Toggle Debug");
+        debug = new JLabel("Press B to Toggle Debuger");
         debug.setFont(gameRunner.getFont());
         debug.setForeground(Color.BLACK);
-        debug.setBounds(20, 60, 300, 30);
+        debug.setBounds(20, 60, 500, 30);
         add(debug);
 
         player = new Player(100, 475, "src/sun1.png", "src/sun2.png", "src/sun3.png");
         
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(1300, 480, "src/student.png"));
-        enemies.add(new Enemy(1300, 250, "src/bird.png"));
+        enemies.add(new Enemy(1300, 480, "src/student.png", "src/student2.png"));
+        enemies.add(new Enemy(1300, 250, "src/bird.png", "src/bird2.png"));
         enemies.add(new Enemy(1300, 450,130, 130, "src/harns.png"));
         enemies.add(new Enemy(1300, 440, 140, 140, "src/harnsF.png"));
 
         items = new ArrayList<>();
         items.add(new Cat(1300, 480, "src/cat.png"));
-        items.add(new Shield(1300, 480, "src/cat2.png"));
+        items.add(new Shield(1300, 480, "src/shield.png"));
     }
 
     public void startGame() {
@@ -133,34 +133,47 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (player.getY() > 500) {
             gameOver();
         }
-        
+
+        if (player.isCat() && catScoreCount >= 5) {
+            player.setCat(false);
+            catScoreCount = 0;
+        }
         // Check if neither enemy nor item is active, spawn something new
         if (!isEnemyActive && !isItemActive) {
             spawning();
         }
         
         // Update enemy if it exists
+        // Update enemy if it exists
         if (isEnemyActive && currentEnemy != null) {
             currentEnemy.update(ENEMY_SPEED);
             
             checkCollision();
             
-            // Scoring logic
-            if (currentEnemy.getX() < player.getX() - 150 && !currentEnemy.isScored()) {
-                score++;
-                scoreLabel.setText("Score: " + score);
-                if (score % 5 == 0 && ENEMY_SPEED > -25) {
-                    System.out.println("Speed got increased");
-                    ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
+            // We need to check again if currentEnemy is null
+            // since checkCollision might have set it to null
+            if (currentEnemy != null) {
+                // Scoring logic
+                if (currentEnemy.getX() < player.getX() - 150 && !currentEnemy.isScored()) {
+                    if (player.isCat()) {
+                        score += 2;
+                        catScoreCount++;
+                    }
+                    else {score++;}
+                    scoreLabel.setText("Score: " + score);
+                    if (score % 5 == 0 && ENEMY_SPEED > -25) {
+                        System.out.println("Speed got increased");
+                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
+                    }
+                    currentEnemy.setScored(true);
                 }
-                currentEnemy.setScored(true);
-            }
-            
-            // If enemy moved off screen, deactivate it to spawn something new
-            if (currentEnemy.getX() <= -100) {
-                System.out.println("Enemy exited, spawning new object");
-                isEnemyActive = false;
-                currentEnemy = null;
+                
+                // If enemy moved off screen, deactivate it to spawn something new
+                if (currentEnemy.getX() <= -100) {
+                    System.out.println("Enemy exited, spawning new object");
+                    isEnemyActive = false;
+                    currentEnemy = null;
+                }
             }
         }
         
@@ -171,12 +184,13 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             // Check for collision with item
             if (player.getBounds().intersects(currentItem.getBounds())) {
                 System.out.println("Item collected!");
-                if (currentItem.getClass() == Shield.class) {
-                    isShield = true;
+                if (currentItem instanceof Shield) {
+                    player.setShield(true);
                     System.out.println("SHILEDDD!!!");
                 }
                 else if (currentItem instanceof Cat) {
-
+                    player.setCat(true);
+                    System.out.println("CAT!!!");
                 }
                 isItemActive = false;
                 currentItem = null;
@@ -193,7 +207,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     public void spawning() {
         int rand = ThreadLocalRandom.current().nextInt(10);
-        if (rand > 3) {
+        if (rand > 1) {
             spawnEnemy();
         } else {
             spawnItem();
@@ -221,17 +235,23 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         System.out.println("Item spawned: " + itemType);
     }
     public void checkCollision() {
-        if (isShield) {
-            if (player.getBounds().intersects(currentEnemy.getBounds()) && currentEnemy.isScored()) {
-                isShield = false;
+        if (player.isShield()) {
+            if (player.getBounds().intersects(currentEnemy.getBounds())) {
+                System.out.println("Shield hit!");
+                currentEnemy = null;
+                isEnemyActive = false;
+                score++;
+                scoreLabel.setText("Score: " + score);
+                player.setShield(false);
             }
         }
         else {
-            player.getBounds().intersects(currentEnemy.getBounds());
-            gameOver();
-        }
+            if (player.getBounds().intersects(currentEnemy.getBounds())) {
+                gameOver();
+            }
         }
     }
+    
     public void gameOver() {
         running = false;
         isGameOver = true;
@@ -301,7 +321,14 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (currentItem != null) {
             currentItem.paint(g);
         }
-
+        if (player.isShield()) {
+            Image shield = new ImageIcon("src/shield.png").getImage();
+            g.drawImage(shield, player.getX() + 25, player.getY() - 60, 50, 50, this);
+        }
+        if (player.isCat()) {
+            Image cat = new ImageIcon("src/cat.png").getImage();
+            g.drawImage(cat, player.getX() -50, player.getY() + 30, 70, 70, this);
+        }
         if (isDebug) {
             g.setColor(Color.RED);
             g.drawRect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
@@ -318,7 +345,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             
             g.setColor(Color.BLACK);
             g.setFont(gameRunner.getFont());
-            g.drawString("Enemy Speed: " + ENEMY_SPEED, 1000, 50);
+            g.drawString("Enemy Speed: " + Math.abs(ENEMY_SPEED), 970, 50);
         }
 
         if (isGameOver) {

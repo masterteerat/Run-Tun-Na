@@ -5,5 +5,4 @@ public class Cat extends Item {
     public Cat(int startX, int startY, int width, int height, String imagePath) {
         super(startX, startY, width, height, imagePath);
     }
-
 }

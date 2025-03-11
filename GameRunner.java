@@ -108,7 +108,6 @@ public class GameRunner extends JFrame {
         return font;
     }
     
-
     public static void main(String[] args) {
         new GameRunner();
     }
