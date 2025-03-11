@@ -11,6 +11,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Thread gameThread;
     private boolean running = false;
     private boolean isGameOver = false;
+    private boolean isShield = false;
     private GameRunner gameRunner;
 
     private JButton retry, backMenu;
@@ -19,6 +20,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     private int ENEMY_SPEED = -7;
     private Enemy currentEnemy;
+    private Item currentItem;
     private Player player;
     
     private Image floor;
@@ -28,115 +30,208 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
 
     private JLabel debug;
     private boolean isDebug = false;
-    ArrayList<Enemy> enemies;
+
+    private ArrayList<Enemy> enemies;
+    private ArrayList<Item> items;
     
-        public GameScreen(GameRunner gameRunner) {
-            this.gameRunner = gameRunner;
-            setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
-            setBackground(Color.decode("#E8FEFF"));
-            setFocusable(true);
-            requestFocusInWindow();
-            addKeyListener(this);
-            setLayout(null);
+    // Track what's currently on screen
+    private boolean isEnemyActive = false;
+    private boolean isItemActive = false;
+    
+    public GameScreen(GameRunner gameRunner) {
+        this.gameRunner = gameRunner;
+        setPreferredSize(new Dimension(GameRunner.SCREEN_WIDTH, GameRunner.SCREEN_HEIGHT));
+        setBackground(Color.decode("#E8FEFF"));
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(this);
+        setLayout(null);
+        
+        try {
+            floor = ImageIO.read(new File("src/Elements/floor.png"));
+            cloud1 = ImageIO.read(new File("src/Elements/cloud2.png"));
+            cloud2 = ImageIO.read(new File("src/Elements/cloud3.png")); 
+            cloud3 = ImageIO.read(new File("src/Elements/cloud3.png"));
             
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        ENEMY_SPEED = -7;
+        scoreLabel = new JLabel("Score: " + score);
+        scoreLabel.setFont(gameRunner.getFont());
+        scoreLabel.setForeground(Color.BLACK);
+        scoreLabel.setBounds(20, 20, 300, 30);
+        add(scoreLabel);
+
+        debug = new JLabel("Press B to Toggle Debug");
+        debug.setFont(gameRunner.getFont());
+        debug.setForeground(Color.BLACK);
+        debug.setBounds(20, 60, 300, 30);
+        add(debug);
+
+        player = new Player(100, 475, "src/sun1.png", "src/sun2.png", "src/sun3.png");
+        
+        enemies = new ArrayList<>();
+        enemies.add(new Enemy(1300, 480, "src/student.png"));
+        enemies.add(new Enemy(1300, 250, "src/bird.png"));
+        enemies.add(new Enemy(1300, 450,130, 130, "src/harns.png"));
+        enemies.add(new Enemy(1300, 440, 140, 140, "src/harnsF.png"));
+
+        items = new ArrayList<>();
+        items.add(new Cat(1300, 480, "src/cat.png"));
+        items.add(new Shield(1300, 480, "src/cat2.png"));
+    }
+
+    public void startGame() {
+        if (running) return;
+        running = true;
+        isGameOver = false;
+        score = 0;
+        scoreLabel.setText("Score: " + score);
+        ENEMY_SPEED = -7;
+        removeButtons();
+        
+        // Reset active flags
+        isEnemyActive = false;
+        isItemActive = false;
+        currentEnemy = null;
+        currentItem = null;
+        
+        // Spawn first object
+        spawning();
+        
+        gameThread = new Thread(this);
+        gameThread.start();
+    }
+
+    @Override
+    public void run() {
+        while (running) {
+            update();
+            repaint();
             try {
-                floor = ImageIO.read(new File("src/Elements/floor.png"));
-                cloud1 = ImageIO.read(new File("src/Elements/cloud2.png"));
-                cloud2 = ImageIO.read(new File("src/Elements/cloud3.png")); 
-                cloud3 = ImageIO.read(new File("src/Elements/cloud3.png"));
-                
-            } catch (IOException e) {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            
-            ENEMY_SPEED = -7;
-            scoreLabel = new JLabel("Score: " + score);
-            scoreLabel.setFont(gameRunner.getFont());
-            scoreLabel.setForeground(Color.BLACK);
-            scoreLabel.setBounds(20, 20, 300, 30);
-            add(scoreLabel);
-    
-            debug = new JLabel("Press B to Toggle Debug");
-            debug.setFont(gameRunner.getFont());
-            debug.setForeground(Color.BLACK);
-            debug.setBounds(20, 60, 300, 30);
-            add(debug);
-    
-            player = new Player(100, 475, "src/sun1.png", "src/sun2.png", "src/sun3.png");
-            enemies = new ArrayList<>();
-            enemies.add(new Enemy(1300, 480, "src/student.png"));
-            enemies.add(new Enemy(1300, 250, "src/bird.png"));
-            enemies.add(new Enemy(1300, 450,130, 130, "src/harns.png"));
-            enemies.add(new Enemy(1300, 440, 140, 140, "src/harnsF.png"));
         }
-    
-        public void startGame() {
-            if (running) return;
-            running = true;
-            isGameOver = false;
-            removeButtons();
-            spawnEnemy();
-            gameThread = new Thread(this);
-            gameThread.start();
-            
-        }
-    
-        @Override
-        public void run() {
-            while (running) {
-                update();
-                repaint();
-                try {
-                    Thread.sleep(16);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    
-        public void update() {
-            if (isGameOver) {return;}
+    }
 
-            updateBackground();
-            player.update();
-            
-            if (!player.isJumping()) {
-                player.startWalking();
-            } else {
-                player.stopWalking();
-            }
+    public void update() {
+        if (isGameOver) {return;}
 
-            if (player.getY() > 500) {
-                gameOver();
-            }
+        updateBackground();
+        player.update();
+        
+        if (!player.isJumping()) {
+            player.startWalking();
+        } else {
+            player.stopWalking();
+        }
+
+        if (player.getY() > 500) {
+            gameOver();
+        }
+        
+        // Check if neither enemy nor item is active, spawn something new
+        if (!isEnemyActive && !isItemActive) {
+            spawning();
+        }
+        
+        // Update enemy if it exists
+        if (isEnemyActive && currentEnemy != null) {
             currentEnemy.update(ENEMY_SPEED);
-            if (player.getBounds().intersects(currentEnemy.getBounds())){
-                gameOver();
-            }
-            if (currentEnemy.getX() < player.getX() && !currentEnemy.isScored()) {
+            
+            checkCollision();
+            
+            // Scoring logic
+            if (currentEnemy.getX() < player.getX() - 150 && !currentEnemy.isScored()) {
                 score++;
                 scoreLabel.setText("Score: " + score);
-                    if (score % 5 == 0 && ENEMY_SPEED > -25) {
-                        System.out.println("Speed got increased");
-                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
-                    }
-                currentEnemy.setScored(true);
+                if (score % 5 == 0 && ENEMY_SPEED > -25) {
+                    System.out.println("Speed got increased");
+                    ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
                 }
+                currentEnemy.setScored(true);
+            }
+            
+            // If enemy moved off screen, deactivate it to spawn something new
             if (currentEnemy.getX() <= -100) {
-                System.out.println("Spawn get called!");
-                System.out.println("Speed" + ENEMY_SPEED);
-                spawnEnemy();
+                System.out.println("Enemy exited, spawning new object");
+                isEnemyActive = false;
+                currentEnemy = null;
             }
         }
+        
+        // Update item if it exists
+        if (isItemActive && currentItem != null) {
+            currentItem.update(ENEMY_SPEED);
+            
+            // Check for collision with item
+            if (player.getBounds().intersects(currentItem.getBounds())) {
+                System.out.println("Item collected!");
+                if (currentItem.getClass() == Shield.class) {
+                    isShield = true;
+                    System.out.println("SHILEDDD!!!");
+                }
+                else if (currentItem instanceof Cat) {
 
+                }
+                isItemActive = false;
+                currentItem = null;
+            }
+            
+            // If item moved off screen, deactivate it to spawn something new
+            if (currentItem != null && currentItem.getX() <= -100) {
+                System.out.println("Item exited, spawning new object");
+                isItemActive = false;
+                currentItem = null;
+            }
+        }
+    }
+
+    public void spawning() {
+        int rand = ThreadLocalRandom.current().nextInt(10);
+        if (rand > 3) {
+            spawnEnemy();
+        } else {
+            spawnItem();
+        }
+    }
+    
     private void spawnEnemy() {
-        int enemyType = ThreadLocalRandom.current().nextInt(0, 4);
-        System.out.println(enemyType);
+        if (isEnemyActive || isItemActive) return; // Don't spawn if something is active
+        
+        int enemyType = ThreadLocalRandom.current().nextInt(0, enemies.size());
         currentEnemy = enemies.get(enemyType);
         currentEnemy.setX(1300);
         currentEnemy.setScored(false);
+        isEnemyActive = true;
+        System.out.println("Enemy spawned: " + enemyType);
     }
     
+    private void spawnItem() {
+        if (isEnemyActive || isItemActive) return; // Don't spawn if something is active
+        
+        int itemType = ThreadLocalRandom.current().nextInt(0, items.size());
+        currentItem = items.get(itemType);
+        currentItem.setX(1300);
+        isItemActive = true;
+        System.out.println("Item spawned: " + itemType);
+    }
+    public void checkCollision() {
+        if (isShield) {
+            if (player.getBounds().intersects(currentEnemy.getBounds()) && currentEnemy.isScored()) {
+                isShield = false;
+            }
+        }
+        else {
+            player.getBounds().intersects(currentEnemy.getBounds());
+            gameOver();
+        }
+        }
+    }
     public void gameOver() {
         running = false;
         isGameOver = true;
@@ -167,7 +262,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         }
         repaint();
         revalidate();
-        }
+    }
 
     private int cloudX1 = 500, cloudX2 = 100, cloudX3 = 1100;
     private int cloudSpeed = -2;
@@ -179,6 +274,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             g.drawImage(cloud3, cloudX3, 70, 400, 220, this);
         }
     }
+    
     private void updateBackground() {
         cloudX1 += cloudSpeed;
         cloudX2 += cloudSpeed;
@@ -189,8 +285,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (cloudX3 < -400){cloudX3 = 1280;}
     }
 
-        @Override
-        protected void paintComponent(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         if (floor != null) {g.drawImage(floor, 0, 295, getWidth(), getHeight(), this);}
@@ -201,6 +297,10 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (currentEnemy != null) {
             currentEnemy.paint(g);
         }
+        
+        if (currentItem != null) {
+            currentItem.paint(g);
+        }
 
         if (isDebug) {
             g.setColor(Color.RED);
@@ -210,6 +310,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 g.setColor(Color.BLUE);
                 g.drawRect(currentEnemy.getBounds().x, currentEnemy.getBounds().y, currentEnemy.getBounds().width, currentEnemy.getBounds().height);
             }
+            
+            if (currentItem != null) {
+                g.setColor(Color.GREEN);
+                g.drawRect(currentItem.getBounds().x, currentItem.getBounds().y, currentItem.getBounds().width, currentItem.getBounds().height);
+            }
+            
             g.setColor(Color.BLACK);
             g.setFont(gameRunner.getFont());
             g.drawString("Enemy Speed: " + ENEMY_SPEED, 1000, 50);

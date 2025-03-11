@@ -42,11 +42,6 @@ public class Enemy extends JLabel {
 
     public void update(int speed) {
         setX(getX() + speed);
-
-        // if (getX() < -100) {
-        //     setX(1300);
-        //     scored = false;
-        // }
     }
 
     public int getX() { return x; }
