@@ -79,7 +79,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         enemies.add(new Enemy(1300, 440, 140, 140, "src/harnsF.png"));
 
         items = new ArrayList<>();
-        items.add(new Cat(1300, 480, "src/cat.png"));
+        items.add(new Cat(1300, 490, "src/cat.png"));
         items.add(new Shield(1300, 480, "src/shield.png"));
     }
 
@@ -364,6 +364,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             player.jump();
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            gameRunner.setHighScore(score);
             gameRunner.showGameMenu();
         }
         if (e.getKeyCode() == KeyEvent.VK_O) {

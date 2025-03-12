@@ -60,6 +60,15 @@ public class GameRunner extends JFrame {
         gameScreen.requestFocusInWindow();
         gameScreen.startGame();
     }
+    public void showH2P() {
+        remove(gameMenu);
+
+
+
+        revalidate();
+        repaint();
+        gameMenu.requestFocusInWindow();
+    }
 
     public void restartGame() {
         remove(gameScreen);
@@ -97,13 +106,20 @@ public class GameRunner extends JFrame {
         try (FileWriter writer = new FileWriter(SCORE_FILE)) {
             writer.write(String.valueOf(highScore));
         } catch (IOException e) {
-            System.err.println("เกิดข้อผิดพลาดในการบันทึกคะแนนสูงสุด: " + e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
-    public void resetHighScore() {
-        highScore = 0;
-        saveHighScore();
+  public void resetHighScore() {
+    highScore = 0;
+    saveHighScore();
+    
+    File file = new File(SCORE_FILE);
+    if (file.exists()) {
+        file.delete();
+        repaint();
+        revalidate();
     }
+}
     public Font getFont() {
         return font;
     }

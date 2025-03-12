@@ -11,7 +11,7 @@ public class GameMenu extends JPanel {
     private JLabel benchLabel, treesLabel, CloudSunLabel, cloud2Label,cloud3Label, castlesLabel,
             floorLabel, mushroomLabel, starLabel,CATLabel, startImg;
 
-    private JButton startButton;
+    private JButton startButton, h2p, resetButton;
 
     private JLabel titleLabel, titleLabe2;
 
@@ -70,6 +70,18 @@ public class GameMenu extends JPanel {
         startButton.setOpaque(false);
         startButton.addActionListener((ActionEvent e) -> gameRunner.showGameScreen());
         add(startButton);
+
+        h2p = new JButton("HOW TO PLAY");
+        h2p.setFont(gameRunner.getFont());
+        h2p.setBounds(30, 20, 220, 50);
+        h2p.addActionListener(e -> gameRunner.showH2P());
+        add(h2p);
+
+        resetButton = new JButton("Reset");
+        resetButton.setFont(gameRunner.getFont());
+        resetButton.setBounds(1010,70,180,50);
+        resetButton.addActionListener(e -> gameRunner.resetHighScore());
+        add(resetButton);
     }
 
     private JLabel createImageLabel(String filePath, int x, int y, int width, int height) throws IOException {
@@ -86,8 +98,8 @@ public class GameMenu extends JPanel {
             g.setColor(Color.BLACK);
             g.setFont(gameRunner.getFont());
             if (gameRunner.getHighScore() < 100) {
-                g.drawString("Highest Score: " + gameRunner.getHighScore(), 930, 50);
+                g.drawString("Highest Score: " + gameRunner.getHighScore(), 960, 50);
         }
-        else {g.drawString("Highest Score: " + gameRunner.getHighScore(), 980, 50);}
+        else {g.drawString("Highest Score: " + gameRunner.getHighScore(), 940, 50);}
     }
 }
