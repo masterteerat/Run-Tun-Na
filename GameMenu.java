@@ -22,16 +22,16 @@ public class GameMenu extends JPanel {
         setLayout(null);
 
         try {
-            benchLabel = createImageLabel("src/Elements/bench.png", 225, 500, 150, 75);
-            treesLabel = createImageLabel("src/Elements/trees.png", 820, 325, 500, 250);
+            benchLabel = createImageLabel("src/Elements/bench.png", 225, 520, 150, 75);
+            treesLabel = createImageLabel("src/Elements/trees.png", 820, 340, 500, 250);
             CloudSunLabel = createImageLabel("src/Elements/cloudSun.png", -50, 50, 500, 250);
             cloud2Label = createImageLabel("src/Elements/cloud2.png", 400, 10, 300, 150);
             cloud3Label = createImageLabel("src/Elements/cloud3.png", 800, 20, 500, 250);
-            castlesLabel = createImageLabel("src/Elements/castles.png", -115, 307, 475, 275);
+            castlesLabel = createImageLabel("src/Elements/castles.png", -115, 317, 475, 275);
             floorLabel = createImageLabel("src/Elements/floor.png", -10, 300, 1300, 680);
-            mushroomLabel = createImageLabel("src/Elements/mushroom.png", 1145, 500, 150, 75);
-            CATLabel = createImageLabel("src/Elements/catAuan.png", 795, 488, 150, 100);
-            starLabel = createImageLabel("src/Elements/star.png", 580, 130, 120, 50);
+            mushroomLabel = createImageLabel("src/Elements/mushroom.png", 1145, 520, 150, 75);
+            CATLabel = createImageLabel("src/Elements/catAuan.png", 795, 508, 150, 100);
+            starLabel = createImageLabel("src/Elements/star.png", 585, 130, 120, 50);
             startImg = createImageLabel("src/Elements/startButt.png", ((GameRunner.SCREEN_WIDTH - 400) / 2), 350, 400, 225);
 
             add(benchLabel);
