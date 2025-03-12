@@ -161,9 +161,9 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                     }
                     else {score++;}
                     scoreLabel.setText("Score: " + score);
-                    if (score % 5 == 0 && ENEMY_SPEED > -25) {
+                    if (score % 5 == 0 && ENEMY_SPEED > -30) {
                         System.out.println("Speed got increased");
-                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -25);
+                        ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, -30);
                     }
                     currentEnemy.setScored(true);
                 }
