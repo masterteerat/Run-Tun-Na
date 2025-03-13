@@ -15,19 +15,16 @@ public class Enemy extends JLabel {
     private int width = 100, height = 100;
     private boolean scored = false;
 
-    // Constructor for single image enemy
     public Enemy(int startX, int startY, String imagePath) {
         this.x = startX;
         this.y = startY;
         try {
             this.frames[0] = ImageIO.read(new File(imagePath));
-            this.frames[1] = this.frames[0]; // Use the same image for frame 2
+            this.frames[1] = this.frames[0];
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    // Constructor for single image enemy with custom size
     public Enemy(int startX, int startY, int width, int height, String imagePath) {
         this.x = startX;
         this.y = startY;
@@ -36,13 +33,12 @@ public class Enemy extends JLabel {
         
         try {
             this.frames[0] = ImageIO.read(new File(imagePath));
-            this.frames[1] = this.frames[0]; // Use the same image for frame 2
+            this.frames[1] = this.frames[0];
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Constructor for animated enemy with custom size and two animation frames
     public Enemy(int startX, int startY, int width, int height, String imagePath1, String imagePath2) {
         this.x = startX;
         this.y = startY;
@@ -63,7 +59,6 @@ public class Enemy extends JLabel {
         }
     }
     
-    // Constructor for animated enemy with two animation frames (default size)
     public Enemy(int startX, int startY, String imagePath1, String imagePath2) {
         this.x = startX;
         this.y = startY;
@@ -72,7 +67,6 @@ public class Enemy extends JLabel {
             this.frames[0] = ImageIO.read(new File(imagePath1));
             this.frames[1] = ImageIO.read(new File(imagePath2));
             
-            // Create animation timer
             animationTimer = new Timer(frameDelay, e -> {
                 currentFrame = (currentFrame + 1) % 2;
             });

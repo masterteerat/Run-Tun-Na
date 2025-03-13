@@ -7,8 +7,6 @@ public class GameRunner extends JFrame {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
 
-    private BGM bgm;
-
     private static int highScore;
     private static final String SCORE_FILE = "highscore.txt";
 
@@ -18,14 +16,11 @@ public class GameRunner extends JFrame {
     private GameScreen gameScreen;
 
     public GameRunner() {
-        setTitle("Suntana");
+        setTitle("RUN TAN NA");
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        bgm = new BGM("src/Sounds/BlueCat.wav");
-        bgm.play();
 
         try {
             InputStream fontStream = getClass().getClassLoader().getResourceAsStream("src/fonts/PressStart2P.ttf");

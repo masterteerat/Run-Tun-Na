@@ -23,6 +23,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private Item currentItem;
     private Player player;
     private int catScoreCount = 0;
+    private SFX itemSFX;
     
     private Image floor;
     private Image cloud1;
@@ -35,7 +36,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private ArrayList<Enemy> enemies;
     private ArrayList<Item> items;
     
-    // Track what's currently on screen
     private boolean isEnemyActive = false;
     private boolean isItemActive = false;
     
@@ -47,6 +47,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         requestFocusInWindow();
         addKeyListener(this);
         setLayout(null);
+        itemSFX = new SFX("src/Sounds/CollectItems.wav");
+        itemSFX.setVolume(-10);
         
         try {
             floor = ImageIO.read(new File("src/Elements/floor.png"));
@@ -93,13 +95,11 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         ENEMY_SPEED = -7;
         removeButtons();
         
-        // Reset active flags
         isEnemyActive = false;
         isItemActive = false;
         currentEnemy = null;
         currentItem = null;
         
-        // Spawn first object
         spawning();
         
         gameThread = new Thread(this);
@@ -139,22 +139,16 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             player.setCat(false);
             catScoreCount = 0;
         }
-        // Check if neither enemy nor item is active, spawn something new
         if (!isEnemyActive && !isItemActive) {
             spawning();
         }
         
-        // Update enemy if it exists
-        // Update enemy if it exists
         if (isEnemyActive && currentEnemy != null) {
             currentEnemy.update(ENEMY_SPEED);
             
             checkCollision();
-            
-            // We need to check again if currentEnemy is null
-            // since checkCollision might have set it to null
+
             if (currentEnemy != null) {
-                // Scoring logic
                 if (currentEnemy.getX() < player.getX() - 150 && !currentEnemy.isScored()) {
                     if (player.isCat()) {
                         score += 2;
@@ -169,7 +163,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                     currentEnemy.setScored(true);
                 }
                 
-                // If enemy moved off screen, deactivate it to spawn something new
                 if (currentEnemy.getX() <= -100) {
                     System.out.println("Enemy exited, spawning new object");
                     isEnemyActive = false;
@@ -177,14 +170,12 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 }
             }
         }
-        
-        // Update item if it exists
         if (isItemActive && currentItem != null) {
             currentItem.update(ENEMY_SPEED);
-            
-            // Check for collision with item
             if (player.getBounds().intersects(currentItem.getBounds())) {
                 System.out.println("Item collected!");
+                itemSFX.play();
+                
                 if (currentItem instanceof Shield) {
                     player.setShield(true);
                     System.out.println("SHILEDDD!!!");
@@ -196,8 +187,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 isItemActive = false;
                 currentItem = null;
             }
-            
-            // If item moved off screen, deactivate it to spawn something new
             if (currentItem != null && currentItem.getX() <= -100) {
                 System.out.println("Item exited, spawning new object");
                 isItemActive = false;
@@ -216,8 +205,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     }
     
     private void spawnEnemy() {
-        if (isEnemyActive || isItemActive) return; // Don't spawn if something is active
-        
+        if (isEnemyActive || isItemActive) return;
         int enemyType = ThreadLocalRandom.current().nextInt(0, enemies.size());
         currentEnemy = enemies.get(enemyType);
         currentEnemy.setX(1300);
@@ -227,14 +215,14 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     }
     
     private void spawnItem() {
-        if (isEnemyActive || isItemActive) return; // Don't spawn if something is active
-        
+        if (isEnemyActive || isItemActive) return;
         int itemType = ThreadLocalRandom.current().nextInt(0, items.size());
         currentItem = items.get(itemType);
         currentItem.setX(1300);
         isItemActive = true;
         System.out.println("Item spawned: " + itemType);
     }
+
     public void checkCollision() {
         if (player.isShield()) {
             if (player.getBounds().intersects(currentEnemy.getBounds())) {
@@ -256,15 +244,21 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     public void gameOver() {
         running = false;
         isGameOver = true;
-
+        
         retry = new JButton("RETRY");
         retry.setFont(gameRunner.getFont());
         retry.setBounds((GameRunner.SCREEN_WIDTH / 2) - 160, 450, 150, 50);
+        retry.setFont(gameRunner.getFont());
+        retry.setFocusPainted(false);
+        retry.setBackground(Color.decode("#C0C0C0"));
         retry.addActionListener(e -> gameRunner.restartGame());
 
         backMenu = new JButton("EXIT");
         backMenu.setFont(gameRunner.getFont());
         backMenu.setBounds((GameRunner.SCREEN_WIDTH / 2) + 10, 450, 180, 50);
+        backMenu.setFont(gameRunner.getFont());
+        backMenu.setFocusPainted(false);
+        backMenu.setBackground(Color.decode("#C0C0C0"));
         backMenu.addActionListener(e -> gameRunner.showGameMenu());
 
         add(retry);
@@ -352,8 +346,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
         if (isGameOver) {
             gameRunner.setHighScore(score);
             g.setColor(Color.RED);
-            g.setFont(new Font("Arial", Font.BOLD, 48));
-            g.drawString("GAME OVER", getWidth() / 2 - 120, getHeight() / 2);
+            g.setFont(gameRunner.getFont().deriveFont(Font.BOLD, 48f));
+            g.drawString("GAME OVER", 430, getHeight() / 2);
         }
     }
 

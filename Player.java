@@ -12,6 +12,7 @@ public class Player {
     private boolean isJumping = false;
     private boolean isShield = false;
     private boolean isCat = false;
+    private SFX jumpSound;
 
     private Image[] walkFrames = new Image[3];
     private int currentFrame = 0;
@@ -25,6 +26,8 @@ public class Player {
         this.x = startX;
         this.y = startY;
         frameDelay = 200;
+        jumpSound = new SFX("src/Sounds/jump.wav");
+        jumpSound.setVolume(-10);
 
         try {
             walkFrames[0] = ImageIO.read(new File(imagePath1)); 
@@ -64,6 +67,7 @@ public class Player {
 
     public void jump() {
         if (!isJumping) {
+            jumpSound.play();
             isJumping = true;
             velocityY = jumpForce;
         }
@@ -82,6 +86,17 @@ public class Player {
         }
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(x + 20, y, PLAYER_WIDTH - 40, PLAYER_HEIGHT);
+    }
+    
+    public void setFrameDelay(int delay) {
+        this.frameDelay = delay;
+        if (animationTimer != null) {
+            animationTimer.setDelay(delay);
+        }
+    }
+    public int getFrameDelay() { return frameDelay; }
     public int getX() { return x; }
     public int getY() { return y; }
     public void setX(int x) { this.x = x; }
@@ -92,16 +107,4 @@ public class Player {
     public void setShield(boolean shield) { isShield = shield; }
     public boolean isCat() { return isCat; }
     public void setCat(boolean cat) { isCat = cat; }
-
-    public Rectangle getBounds() {
-        return new Rectangle(x + 20, y, PLAYER_WIDTH - 40, PLAYER_HEIGHT);
-    }
-
-    public void setFrameDelay(int delay) {
-        this.frameDelay = delay;
-        if (animationTimer != null) {
-            animationTimer.setDelay(delay);
-        }
-    }
-    public int getFrameDelay() { return frameDelay; }
 }

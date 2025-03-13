@@ -2,7 +2,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -52,7 +51,7 @@ public class GameMenu extends JPanel {
             e.printStackTrace();
         }
 
-        titleLabel = new JLabel("RUN TA NA ", SwingConstants.CENTER);
+        titleLabel = new JLabel("RUN TAN NA ", SwingConstants.CENTER);
         titleLabel2 = new JLabel("Are You READY!", SwingConstants.CENTER);
 
         titleLabel.setFont(gameRunner.getFont());
