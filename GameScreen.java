@@ -327,8 +327,8 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
             g.drawImage(shield, player.getX() + 25, player.getY() - 60, 50, 50, this);
         }
         if (player.isCat()) {
-            Image cat = new ImageIcon("src/cat.png").getImage();
-            g.drawImage(cat, player.getX() -50, player.getY() + 30, 70, 70, this);
+            Image cat = new ImageIcon("src/catFliped.png").getImage();
+            g.drawImage(cat, player.getX() -50, player.getY() + 30, 70, 83, this);
         }
         if (isDebug) {
             g.setColor(Color.RED);
