@@ -16,7 +16,7 @@ public class GameRunner extends JFrame {
     private GameScreen gameScreen;
 
     public GameRunner() {
-        setTitle("RUN TAN NA");
+        setTitle("RUN TUN NA");
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
