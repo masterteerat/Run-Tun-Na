@@ -100,17 +100,17 @@ public class GameRunner extends JFrame {
             System.err.println(e.getMessage());
         }
     }
-  public void resetHighScore() {
-    highScore = 0;
-    saveHighScore();
-    
-    File file = new File(SCORE_FILE);
-    if (file.exists()) {
-        file.delete();
-        repaint();
-        revalidate();
+    public void resetHighScore() {
+        highScore = 0;
+        saveHighScore();
+        
+        File file = new File(SCORE_FILE);
+        if (file.exists()) {
+            file.delete();
+            repaint();
+            revalidate();
+        }
     }
-}
     public Font getFont() {
         return font;
     }

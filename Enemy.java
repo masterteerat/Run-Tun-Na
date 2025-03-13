@@ -49,7 +49,6 @@ public class Enemy extends JLabel {
             this.frames[0] = ImageIO.read(new File(imagePath1));
             this.frames[1] = ImageIO.read(new File(imagePath2));
             
-            // Create animation timer
             animationTimer = new Timer(frameDelay, e -> {
                 currentFrame = (currentFrame + 1) % 2;
             });

@@ -114,8 +114,7 @@ public class GameMenu extends JPanel {
         }
 
     private JLabel createImageLabel(String filePath, int x, int y, int width, int height) throws IOException {
-        ImageIcon icon = new ImageIcon(
-                ImageIO.read(new File(filePath)).getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        ImageIcon icon = new ImageIcon(ImageIO.read(new File(filePath)).getScaledInstance(width, height, Image.SCALE_SMOOTH));
         JLabel label = new JLabel(icon);
         label.setBounds(x, y, width, height);
         return label;
