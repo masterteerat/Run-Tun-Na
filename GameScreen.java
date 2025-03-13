@@ -229,8 +229,6 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                 System.out.println("Shield hit!");
                 currentEnemy = null;
                 isEnemyActive = false;
-                score++;
-                scoreLabel.setText("Score: " + score);
                 player.setShield(false);
             }
         }
@@ -304,7 +302,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (floor != null) {g.drawImage(floor, 0, 295, getWidth(), getHeight(), this);}
+        if (floor != null) {g.drawImage(floor, 0, 313, getWidth(), getHeight(), this);}
         bgMoving(g);
 
         player.paint(g);
