@@ -18,7 +18,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private int score = 0;
 
     private int ENEMY_SPEED = -7;
-    private int speedLimit = -28;
+    private int speedLimit = -25;
     private Enemy currentEnemy;
     private Item currentItem;
     private Player player;
