@@ -16,6 +16,7 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
     private JButton retry, backMenu;
     public JLabel scoreLabel;
     private int score = 0;
+    private int prevScore = 5;
 
     private int ENEMY_SPEED = -7;
     private int speedLimit = -25;
@@ -156,9 +157,10 @@ public class GameScreen extends JPanel implements Runnable, KeyListener {
                     }
                     else {score++;}
                     scoreLabel.setText("Score: " + score);
-                    if (score % 5 == 0 && ENEMY_SPEED > speedLimit) {
+                    if (score >= prevScore && ENEMY_SPEED > speedLimit) {
                         System.out.println("Speed got increased");
                         ENEMY_SPEED = Math.max(ENEMY_SPEED - 3, speedLimit);
+                        prevScore += 5;
                     }
                     currentEnemy.setScored(true);
                 }
